@@ -30,6 +30,16 @@ mean_pix = LargePix.mean(axis = (0,1)).round()  # get means of row and column th
 img2[120:240, 120:240] = mean_pix               # replace all pixels in the originally chosen space with the mean RGB
 
 
+
+#alternative way of indexing
+rows = np.arange(0,120)
+columns = np.arange(0,120)
+img2[np.ix_(rows,columns)]
+
+# largePix = img_trans[
+#            y_dice * blockLen: (y_dice + 1) * blockLen,
+#            x_dice * blockLen: (x_dice + 1) * blockLen,
+#            :]
 #input image to show whatever here
 show_im(LargePix)
 show_im(img2)
