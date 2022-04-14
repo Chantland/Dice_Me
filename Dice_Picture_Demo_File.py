@@ -29,7 +29,11 @@ mean_pix = LargePix.mean(axis = (0,1)).round()  # get means of row and column th
 
 img2[120:240, 120:240] = mean_pix               # replace all pixels in the originally chosen space with the mean RGB
 
-
+cv2.namedWindow("image", cv2.WINDOW_NORMAL)
+cv2.imshow('image', pic.img)
+# cv2.resizeWindow('image', width = 1000, height=1000)
+cv2.waitKey(0)  # show window until key press
+cv2.destroyAllWindows()  # then destroy
 
 #alternative way of indexing
 rows = np.arange(0,120)

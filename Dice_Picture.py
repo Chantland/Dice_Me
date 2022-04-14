@@ -6,9 +6,12 @@ import math
 import cv2
 
 class dicePic():
-    def __init__(self, image): # TODO: Should this automatically give preset values if say this had "preset = True"?
+    def __init__(self, image, crop=None): # TODO: Should this automatically give preset values if say this had "preset = True"?
         self.img = cv2.imread(image)
 
+        # supply x and y values to Crop
+        if crop is not None:
+            self.img = self.img[0:crop[0],0:crop[1]]
     def possible_blocks(self):
 
 
@@ -47,14 +50,19 @@ class dicePic():
         dicePixSizeList = []
         for iDiv in mod_product_list:  #take the possible pixel sizes and divide them from the image to get number of dice
             dicePixSizeList.append([ver_y/iDiv, hor_x / iDiv])
-        dicePixSizeList = np.array(dicePixSizeList)
+        dicePixSizeList = np.array(dicePixSizeList, dtype=np.intp)
         self.posDiceNum = dicePixSizeList
 
         np.set_printoptions(suppress=True) # suppress scientific notation for easier display
 
-        return print("possible combinations of the number of dice per column per row \n",
-                     self.posDiceNum)
-        
+        varNum = 0
+        print("possible combinations of the number of dice per row per column")
+        for idim in self.posDiceNum:
+            print(f'{varNum} {idim}')
+            varNum += 1
+        # return print("possible combinations of the number of dice per row per column \n",
+        #              self.posDiceNum)
+
 
 
     def dice_alt(self, xydim): #TODO: make xydim optional and figure out how to correctly label these
@@ -74,6 +82,9 @@ class dicePic():
         blockLen = self.img.shape[0] / xydim[0]
 
         self.img_trans = self.img.copy()
+        self.img_reduced = np.zeros((xydim[0],xydim[1],3))
+
+        self.meanPix_list = []
         for y_dice in range(0, xydim[0]):
             for x_dice in range(0, xydim[1]):
 
@@ -86,12 +97,25 @@ class dicePic():
 
                 # get means of row and column then round
                 meanPix = largePix.mean(axis=(0, 1)).round()
+                self.meanPix_list.append(meanPix)
                 # apply
                 self.img_trans[np.ix_(rows,columns)] = meanPix
+                self.img_reduced[y_dice,x_dice] = meanPix
+
+        self.img_reduced = np.array(self.img_reduced,  dtype=np.uint8)
+        dice_count = xydim[0] * xydim[1]
+        dice_cost = np.ceil(dice_count/100)
+        print(f'total number of dice required {dice_count}')
+        print(f'pricing from ${dice_cost * 10} to ${dice_cost * 16}\n')
+
+        print('size in inches if you are using 12mm dice') #TODO: this might use an input
+        print(f'{xydim[0]*12/25.4} tall and {xydim[1]*12/25.4} wide\n')
+
+        print('size in inches if you are using 16mm dice')
+        print(f'{xydim[0]*16/25.4} tall and {xydim[1]*16/25.4} wide\n')
 
         self.showIm(image=self.img_trans)
 
-        return print('done')
 
 
 
@@ -106,7 +130,8 @@ class dicePic():
         if image is None:
             image = self.img #TODO: make this actually use a different image input (img2) since the new image is what we want.
 
-        # show image then run the following commands (or else it crashes)
+        # show image then run the following commands (or else it doesn't display)
+        cv2.namedWindow("image", cv2.WINDOW_NORMAL)
         cv2.imshow('image', image)
         cv2.waitKey(0)  # show window until key press
         cv2.destroyAllWindows()  # then destroy
