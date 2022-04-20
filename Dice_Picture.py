@@ -108,6 +108,9 @@ class dicePic():
         print(f'total number of dice required {dice_count}')
         print(f'pricing from ${dice_cost * 10} to ${dice_cost * 16}\n')
 
+        print('size in inches if you are using 5mm dice')  # TODO: this might use an input
+        print(f'{xydim[0] * 5 / 25.4} tall and {xydim[1] * 12 / 25.4} wide\n')
+
         print('size in inches if you are using 12mm dice') #TODO: this might use an input
         print(f'{xydim[0]*12/25.4} tall and {xydim[1]*12/25.4} wide\n')
 
@@ -117,7 +120,8 @@ class dicePic():
         self.showIm(image=self.img_trans)
 
 
-
+    def inp_Dice(self, image):
+        pass
 
     def showIm(self, image=None):
         """
@@ -128,7 +132,7 @@ class dicePic():
         import cv2
 
         if image is None:
-            image = self.img #TODO: make this actually use a different image input (img2) since the new image is what we want.
+            image = self.img
 
         # show image then run the following commands (or else it doesn't display)
         cv2.namedWindow("image", cv2.WINDOW_NORMAL)
