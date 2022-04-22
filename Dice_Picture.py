@@ -125,7 +125,7 @@ class dicePic():
 
     def showIm(self, image=None):
         """
-        :param image: 3x3 np.array, optional
+        :param image: n*m*3 np.array, optional
             displays the image desired or shows the currently transformed img
         :return:
         """
