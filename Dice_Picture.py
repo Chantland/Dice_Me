@@ -12,6 +12,7 @@ class dicePic():
         # supply x and y values to Crop
         if crop is not None:
             self.img = self.img[0:crop[0],0:crop[1]]
+        self.possible_blocks()
     def possible_blocks(self):
 
 
@@ -82,7 +83,7 @@ class dicePic():
         blockLen = self.img.shape[0] / xydim[0]
 
         self.img_trans = self.img.copy()
-        self.img_reduced = np.zeros((xydim[0],xydim[1],3))
+        self.img_reduced = np.zeros((xydim[0],xydim[1],3))  #TODO: make this the only thing that originally displays
 
         self.meanPix_list = []
         for y_dice in range(0, xydim[0]):
