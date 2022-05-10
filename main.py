@@ -16,13 +16,15 @@ pic = Dice_Picture.dicePic(image, crop=[2800,2300])
 # pic.possible_blocks()  #for showing possible blocks but this is already called from init
 
 # pic.dice_alt([36,64])
-pic.dice_alt(pic.posDiceNum[6])
+pic.dice_alt(pic.posDiceNum[4]) # TODO: make this a singlular index or X/Y input
 
+pic.inp_Dice()
 
 pic.showIm()                      # show original picture
 pic.showIm(image=pic.img_trans)   #show translated image that is original size
-pic.showIm(image=pic.img_reduced) #show trans picture but in single pixel blocks for easier display
-# pic.showIm()
+pic.showIm(pic.img_reduced)       #show trans picture but in single pixel blocks for easier display
+pic.showIm(image=pic.Dice_Pic)    #show trans picture but in single pixel blocks for easier display
+
 
 ############### beta testing ###################
 #for getting those dice strips
@@ -60,6 +62,7 @@ dice_Dpurple = np.array([67, 27, 107])
 dice_white = np.array([230, 230, 250])
 
 #{'dice_black':{0:np.array([40, 40, 40]), 1:np.array([45, 45, 45])}
+import numpy as np
 dice_dict = {}
 dice_dict = {'dice_black':np.array([40, 40, 40]),
             'dice_brown':np.array([155, 60, 40]),
@@ -77,22 +80,25 @@ centroids = []
 for key, value in dice_dict.items():
     centroids.append(value)
 
-points = np.array(np.random.randint(250, size=(20, 3)))
+points = np.array(np.random.randint(250, size=(40, 40, 3)))
 points
 
+points_shaped = points.reshape(1600, 3)
+points_shaped
 
 from scipy.spatial import distance
 
-pw_dist = distance.cdist(points, centroids)
+pw_dist = distance.cdist(points_shaped, centroids)
 pw_dist
 
 labels = np.argmin(pw_dist, axis =1) # get min column ndx per row
 labels #The index is the centroid's index that is closest to the point
 
 centroids = np.array(centroids)
-centroids[labels]
+New_Pix = centroids[labels]
 
 
+New_Pix = New_Pix.reshape(40,40, 3)
 
 
 

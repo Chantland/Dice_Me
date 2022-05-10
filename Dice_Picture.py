@@ -118,11 +118,42 @@ class dicePic():
         print('size in inches if you are using 16mm dice')
         print(f'{xydim[0]*16/25.4} tall and {xydim[1]*16/25.4} wide\n')
 
-        self.showIm(image=self.img_trans)
+        self.showIm(image=self.img_trans) #TODO: chnage this to call inp_Dice
 
 
-    def inp_Dice(self, image):
-        pass
+    def inp_Dice(self):
+        import numpy as np
+        from scipy.spatial import distance
+
+        ver_y, hor_x = self.img_reduced.shape[0:2] #get x and y axis of reduced image.
+
+
+        dice_dict = {} # initialize the colors used for the dice array #TODO: Allow for user input
+        dice_dict = {'dice_black': np.array([40, 40, 40]),
+                     'dice_brown': np.array([155, 60, 40]),
+                     'dice_red': np.array([200, 30, 30]),
+                     'dice_orange': np.array([250, 102, 70]),
+                     'dice_green': np.array([58, 170, 151]),
+                     'dice_blue': np.array([40, 110, 245]),
+                     'dice_Lpurple': np.array([200, 160, 200]),
+                     'dice_Dpurple': np.array([67, 27, 107]),
+                     'dice_white': np.array([230, 230, 230])
+                     }
+
+        centroids = []
+        for key, value in dice_dict.items():
+            centroids.append(value)
+        points = self.img_reduced
+        points = points.reshape(ver_y * hor_x, 3) #reshape to 2D vector for distance calculation
+
+        die_dist = distance.cdist(points, centroids) # find distance of each block pixel to nearest centroid
+        labels = np.argmin(die_dist, axis=1)  # get min column ndx per row
+
+        centroids = np.array(centroids)
+        self.Dice_Pic = centroids[labels].astype('uint8') #reassign the centroids to the dice pic
+        self.Dice_Pic = self.Dice_Pic.reshape(ver_y, hor_x, 3)
+        self.showIm(image=self.Dice_Pic)
+
 
     def showIm(self, image=None):
         """
