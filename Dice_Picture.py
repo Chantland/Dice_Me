@@ -61,8 +61,16 @@ class dicePic():
         for idim in self.posDiceNum:
             print(f'{varNum} {idim}')
             varNum += 1
-        # return print("possible combinations of the number of dice per row per column \n",
-        #              self.posDiceNum)
+
+        dice_alt_inpt = input(f"Which of the following dice dimension sets (0 to {len(self.posDiceNum) - 1}) do you want?")
+        dice_alt_inpt = int(dice_alt_inpt)
+
+        if dice_alt_inpt < 0 or dice_alt_inpt > len(self.posDiceNum) - 1:
+            raise ValueError(
+                f"Number chosen is out of bounds, please choose a number between 0 and {len(self.posDiceNum) - 1}")
+        else:
+            self.dice_alt(self.posDiceNum[dice_alt_inpt]) #get the intended X and Y axis from available dice dimensions
+
 
 
 
@@ -110,7 +118,7 @@ class dicePic():
         print(f'pricing from ${dice_cost * 10} to ${dice_cost * 16}\n')
 
         print('size in inches if you are using 5mm dice')  # TODO: this might use an input
-        print(f'{xydim[0] * 5 / 25.4} tall and {xydim[1] * 12 / 25.4} wide\n')
+        print(f'{xydim[0] * 5 / 25.4} tall and {xydim[1] * 5 / 25.4} wide\n')
 
         print('size in inches if you are using 12mm dice') #TODO: this might use an input
         print(f'{xydim[0]*12/25.4} tall and {xydim[1]*12/25.4} wide\n')
@@ -129,17 +137,18 @@ class dicePic():
 
 
         dice_dict = {} # initialize the colors used for the dice array #TODO: Allow for user input
-        dice_dict = {'dice_black': np.array([40, 40, 40]),
-                     'dice_brown': np.array([155, 60, 40]),
-                     'dice_red': np.array([200, 30, 30]),
-                     'dice_orange': np.array([250, 102, 70]),
-                     'dice_green': np.array([58, 170, 151]),
-                     'dice_blue': np.array([40, 110, 245]),
-                     'dice_Lpurple': np.array([200, 160, 200]),
-                     'dice_Dpurple': np.array([67, 27, 107]),
-                     'dice_white': np.array([230, 230, 230])
+        # BLUE-GREEN-RED,  blue shifted down 10%
+        dice_dict = {'dice_black': np.array([56, 50, 50]),
+                     'dice_brown': np.array([57, 71, 155]),
+                     'dice_red': np.array([46, 48, 193]),
+                     'dice_orange': np.array([68, 107, 250]),
+                     'dice_yellow': np.array([86, 222, 247]),
+                     'dice_green': np.array([141, 176, 58]),
+                     'dice_blue': np.array([224, 114, 43]),
+                     'dice_Lpurple': np.array([219, 166, 205]),
+                     'dice_Dpurple': np.array([100, 30, 71]),
+                     'dice_white': np.array([228, 236, 237])
                      }
-
         centroids = []
         for key, value in dice_dict.items():
             centroids.append(value)
@@ -148,9 +157,28 @@ class dicePic():
 
         die_dist = distance.cdist(points, centroids) # find distance of each block pixel to nearest centroid
         labels = np.argmin(die_dist, axis=1)  # get min column ndx per row
-
         centroids = np.array(centroids)
-        self.Dice_Pic = centroids[labels].astype('uint8') #reassign the centroids to the dice pic
+
+        # Show the closest centroid based off the mean
+        mean_centroids = np.mean(centroids, axis=1)
+        mean_points = np.mean(points, axis=1)
+        mean_points = mean_points.reshape(ver_y * hor_x)
+        pseudo_lables = []
+        for i in range(0, len(mean_points)):
+            lowest_number = 251
+            lowest_cent = -1
+            for ii in range(0, len(mean_centroids)):
+                compNum = abs(mean_points[i] - mean_centroids[ii])
+                if compNum < lowest_number:
+                    lowest_number = compNum
+                    lowest_cent = ii
+            pseudo_lables.append(lowest_cent)
+        pseudo_lables = np.array(pseudo_lables)
+        self.Mean_Dice_Pic = centroids[pseudo_lables].astype('uint8')
+        self.Mean_Dice_Pic = self.Mean_Dice_Pic.reshape(ver_y, hor_x, 3)
+
+
+        self.Dice_Pic = centroids[labels].astype('uint8') #reassign the centroids to the dice pic and set datatype to uint8 (because it will crash otherwise)
         self.Dice_Pic = self.Dice_Pic.reshape(ver_y, hor_x, 3)
         self.showIm(image=self.Dice_Pic)
 

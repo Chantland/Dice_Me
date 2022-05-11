@@ -11,20 +11,20 @@ image = "J&E_Sunshine.jpg"
 
 pic = Dice_Picture.dicePic(image)
 # pic = Dice_Picture.dicePic(image, crop=[1620,2040])
-pic = Dice_Picture.dicePic(image, crop=[2800,2300])
+pic = Dice_Picture.dicePic(image, crop=[2800,2300])     #for cropping
 
+## outdated but completely usable (right now) codings since these functions are now automatically called into other def
 # pic.possible_blocks()  #for showing possible blocks but this is already called from init
-
 # pic.dice_alt([36,64])
-pic.dice_alt(pic.posDiceNum[4]) # TODO: make this a singlular index or X/Y input
+# pic.dice_alt(pic.posDiceNum[4]) # TODO: make this a singlular index or X/Y input
 
-pic.inp_Dice()
+pic.inp_Dice()      #for showing the picture but using dice
 
 pic.showIm()                      # show original picture
-pic.showIm(image=pic.img_trans)   #show translated image that is original size
+pic.showIm(image=pic.img_trans)   #show translated image that is original size, probably do not use this unless for testing
 pic.showIm(pic.img_reduced)       #show trans picture but in single pixel blocks for easier display
-pic.showIm(image=pic.Dice_Pic)    #show trans picture but in single pixel blocks for easier display
-
+pic.showIm(image=pic.Dice_Pic)    #show completed dice pic
+pic.showIm(image=pic.Mean_Dice_Pic)    #show pic but use means
 
 ############### beta testing ###################
 #for getting those dice strips
@@ -105,13 +105,15 @@ New_Pix = New_Pix.reshape(40,40, 3)
 mean_centroids = np.mean(centroids, axis = 1)
 mean_centroids
 
-mean_points =  np.mean(points, axis = 1)
+mean_points =  np.mean(points, axis = 2)
+mean_points = mean_points.reshape(1600)
 mean_points
 
 pseudo_lables = []
-lowest_number = 251
-lowest_cent = -1
+
 for i in range(0, len(mean_points)):
+    lowest_number = 251
+    lowest_cent = -1
     for ii in range(0, len(mean_centroids)):
         compNum = abs(mean_points[i] - mean_centroids[ii])
         if compNum < lowest_number:
