@@ -91,7 +91,7 @@ dice_dict = {'dice_black': np.array([56, 50, 50]),      # BRG
              'dice_Dpurple': np.array([100, 71, 30]),
              'dice_white': np.array([228, 237, 236])
              }
-dice_dict = {'dice_black': np.array([56, 50, 50]),     # BGR
+dice_dict = {'dice_black': np.array([56, 50, 50]),     # BGR Light, 10% blue reduced
              'dice_brown': np.array([57, 71, 155]),
              'dice_red': np.array([46, 48, 193]),
              'dice_orange': np.array([68, 107, 250]),
@@ -124,3 +124,131 @@ cv2.namedWindow("image", cv2.WINDOW_NORMAL)
 cv2.imshow('image', sample_pic)
 cv2.waitKey(0)  # show window until key press
 cv2.destroyAllWindows()  # then destroy
+
+
+
+
+
+#################################################
+
+########### multi-dictionary pip color input testing.
+
+import math
+import numpy as np
+from scipy.spatial import distance
+
+
+# NOTE: you'll have to run the dice script initially to make this demo work
+import Dice_Picture
+image = "J&E_Abby_Wedding.jpg"
+pic = Dice_Picture.dicePic(image)
+pic.inp_Dice()
+
+
+
+perc_pip = (math.pi * (2.2**2)) / (15.75**2) # bottom rung dice, generous pip measurement
+perc_pip = (math.pi * (2.0**2)) / (15.75**2) # bottom run dice, more conservative pip measurement
+perc_pip = (math.pi * (1.75**2)) / (15.75**2) # chessex dice, 16mm
+perc_pip = (math.pi * (1.25**2)) / (12.2**2) #chessex die, 12mm
+perc_pip = (math.pi * (18**2)) / (141**2)   #Gimp dice pic in pixel length (currently used)
+
+black_pip = np.array([30, 30, 30])
+white_pip = np.array([230, 230, 230])
+
+dice_dict = {'dice_black': [np.array([56, 50, 50]),np.array([230, 230, 230])],     # BGR light, 10% blue reduced, Dice color then pip color
+             'dice_brown': [np.array([57, 71, 155]),np.array([230, 230, 230])],
+             'dice_red': [np.array([46, 48, 193]),np.array([230, 230, 230])],
+             'dice_orange': [np.array([68, 107, 250]),np.array([230, 230, 230])],
+             'dice_yellow': [np.array([86, 222, 247]),np.array([30, 30, 30])],
+             'dice_green': [np.array([141, 176, 58]),np.array([230, 230, 230])],
+             'dice_blue': [np.array([224, 114, 43]),np.array([230, 230, 230])],
+             'dice_Lpurple': [np.array([219, 166, 205]),np.array([230, 230, 230])],
+             'dice_Dpurple': [np.array([100, 30, 71]),np.array([230, 230, 230])],
+             'dice_white': [np.array([228, 236, 237]),np.array([30, 30, 30])]
+             }
+pip_dice_dict = {}
+dif_Die_Count = 0
+centroids = []
+for key, value in dice_dict.items():
+    pip_dice_dict[key] = {} #extract key
+    for i in range(1, 7):   #run through number of pips
+        dif_Die_Count += 1  # move onto the next pip
+        pip_Area = perc_pip * i    #get pip area
+        base_Area = 1 - pip_Area  #get base die area left after taking away pips
+        # append to dictionary starting at 1 pips (note that the labels start at 0 so to match these up, you will need to add 1 to the label)
+        # value[0] is dice color, value[1] is pip color
+        pip_dice_dict[key][dif_Die_Count] = np.round((value[0] * base_Area) + (value[1] * pip_Area))
+        centroids.append([pip_dice_dict[key][dif_Die_Count], value[0]])  #for adding to a centroid list: averaged die color, base die color
+centroids = np.array(centroids)
+
+points = pic.img_reduced
+ver_y, hor_x = pic.img_reduced.shape[0:2]
+points = points.reshape(ver_y * hor_x, 3) #reshape to 2D vector for distance calculation
+
+die_dist = distance.cdist(points, centroids[:,0]) # find distance of each block pixel to nearest centroid (right now the centroid is complex so we are now indexing)
+labels = np.argmin(die_dist, axis=1)  # get min column ndx per row
+
+pic.Dice_Pic = centroids[labels,1].astype('uint8')  # reassign the centroids to the dice pic and set datatype to uint8 (because it will crash otherwise)
+pic.Dice_Pic = pic.Dice_Pic.reshape(ver_y, hor_x, 3)
+pic.showIm(image=pic.Dice_Pic)
+
+############ Follow up from above, implementing pips #########
+import math
+import numpy as np
+from scipy.spatial import distance
+
+
+# NOTE: you'll have to run the dice script initially to make this demo work
+import Dice_Picture
+image = "J&E_Abby_Wedding.jpg"
+pic = Dice_Picture.dicePic(image)
+pic.inp_Dice()
+
+
+
+perc_pip = (math.pi * (2.2**2)) / (15.75**2) # bottom rung dice, generous pip measurement
+perc_pip = (math.pi * (2.0**2)) / (15.75**2) # bottom run dice, more conservative pip measurement
+perc_pip = (math.pi * (1.75**2)) / (15.75**2) # chessex dice, 16mm
+perc_pip = (math.pi * (1.25**2)) / (12.2**2) #chessex die, 12mm
+perc_pip = (math.pi * (18**2)) / (141**2)   #Gimp dice pic in pixel length (currently used)
+
+black_pip = np.array([30, 30, 30])
+white_pip = np.array([230, 230, 230])
+
+dice_dict = {'dice_black': [np.array([56, 50, 50]),np.array([230, 230, 230])],     # BGR light, 10% blue reduced, Dice color then pip color
+             'dice_brown': [np.array([57, 71, 155]),np.array([230, 230, 230])],
+             'dice_red': [np.array([46, 48, 193]),np.array([230, 230, 230])],
+             'dice_orange': [np.array([68, 107, 250]),np.array([230, 230, 230])],
+             'dice_yellow': [np.array([86, 222, 247]),np.array([30, 30, 30])],
+             'dice_green': [np.array([141, 176, 58]),np.array([230, 230, 230])],
+             'dice_blue': [np.array([224, 114, 43]),np.array([230, 230, 230])],
+             'dice_Lpurple': [np.array([219, 166, 205]),np.array([230, 230, 230])],
+             'dice_Dpurple': [np.array([100, 30, 71]),np.array([230, 230, 230])],
+             'dice_white': [np.array([228, 236, 237]),np.array([30, 30, 30])]
+             }
+pip_dice_dict = {}
+dif_Die_Count = 0
+centroids = []
+for key, value in dice_dict.items():
+    pip_dice_dict[key] = {} #extract key
+    for i in range(1, 7):   #run through number of pips
+        dif_Die_Count += 1  # move onto the next pip
+        pip_Area = perc_pip * i    #get pip area
+        base_Area = 1 - pip_Area  #get base die area left after taking away pips
+        # append to dictionary starting at 1 pips (note that the labels start at 0 so to match these up, you will need to add 1 to the label)
+        # value[0] is dice color, value[1] is pip color
+        pip_dice_dict[key][dif_Die_Count] = np.round((value[0] * base_Area) + (value[1] * pip_Area))
+        centroids.append([pip_dice_dict[key][dif_Die_Count], value[0]])  #for adding to a centroid list: averaged die color, base die color
+centroids = np.array(centroids)
+
+points = pic.img_reduced
+ver_y, hor_x = pic.img_reduced.shape[0:2]
+points = points.reshape(ver_y * hor_x, 3) #reshape to 2D vector for distance calculation
+
+die_dist = distance.cdist(points, centroids[:,0]) # find distance of each block pixel to nearest centroid (right now the centroid is complex so we are now indexing)
+labels = np.argmin(die_dist, axis=1)  # get min column ndx per row
+
+pic.Dice_Pic = centroids[labels,1].astype('uint8')  # reassign the centroids to the dice pic and set datatype to uint8 (because it will crash otherwise)
+pic.Dice_Pic = pic.Dice_Pic.reshape(ver_y, hor_x, 3)
+pic.showIm(image=pic.Dice_Pic)
+

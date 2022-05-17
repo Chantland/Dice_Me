@@ -1,7 +1,6 @@
 
 # requires the download of opencv (cv2) and math
 import numpy as np
-import numpy as np
 import math
 import cv2
 
@@ -107,6 +106,7 @@ class dicePic():
                 # get means of row and column then round
                 meanPix = largePix.mean(axis=(0, 1)).round()
                 self.meanPix_list.append(meanPix)
+
                 # apply
                 self.img_trans[np.ix_(rows,columns)] = meanPix
                 self.img_reduced[y_dice,x_dice] = meanPix
@@ -159,23 +159,24 @@ class dicePic():
         labels = np.argmin(die_dist, axis=1)  # get min column ndx per row
         centroids = np.array(centroids)
 
-        # Show the closest centroid based off the mean
-        mean_centroids = np.mean(centroids, axis=1)
-        mean_points = np.mean(points, axis=1)
-        mean_points = mean_points.reshape(ver_y * hor_x)
-        pseudo_lables = []
-        for i in range(0, len(mean_points)):
-            lowest_number = 251
-            lowest_cent = -1
-            for ii in range(0, len(mean_centroids)):
-                compNum = abs(mean_points[i] - mean_centroids[ii])
-                if compNum < lowest_number:
-                    lowest_number = compNum
-                    lowest_cent = ii
-            pseudo_lables.append(lowest_cent)
-        pseudo_lables = np.array(pseudo_lables)
-        self.Mean_Dice_Pic = centroids[pseudo_lables].astype('uint8')
-        self.Mean_Dice_Pic = self.Mean_Dice_Pic.reshape(ver_y, hor_x, 3)
+
+        # # Show the closest centroid based off the mean (commented out to save on time) #TODO: implement this as an optional input
+        # mean_centroids = np.mean(centroids, axis=1)
+        # mean_points = np.mean(points, axis=1)
+        # mean_points = mean_points.reshape(ver_y * hor_x)
+        # pseudo_lables = []
+        # for i in range(0, len(mean_points)):
+        #     lowest_number = 251
+        #     lowest_cent = -1
+        #     for ii in range(0, len(mean_centroids)):
+        #         compNum = abs(mean_points[i] - mean_centroids[ii])
+        #         if compNum < lowest_number:
+        #             lowest_number = compNum
+        #             lowest_cent = ii
+        #     pseudo_lables.append(lowest_cent)
+        # pseudo_lables = np.array(pseudo_lables)
+        # self.Mean_Dice_Pic = centroids[pseudo_lables].astype('uint8')
+        # self.Mean_Dice_Pic = self.Mean_Dice_Pic.reshape(ver_y, hor_x, 3)
 
 
         self.Dice_Pic = centroids[labels].astype('uint8') #reassign the centroids to the dice pic and set datatype to uint8 (because it will crash otherwise)
