@@ -100,7 +100,7 @@ class dicePic():
                 rows = np.arange(y_dice*blockLen, (y_dice+1)*blockLen, dtype=np.intp)
                 columns = np.arange(x_dice*blockLen, (x_dice+1)*blockLen, dtype=np.intp)
 
-                # designate the square that we want to average the Red Green and Blue values (3 averages)
+                # designate the square that we want to average the Blue Green and Red values (3 averages)
                 largePix = self.img_trans[np.ix_(rows,columns)]
 
                 # get means of row and column then round
