@@ -7,18 +7,18 @@ image = "J&E_Abby_Wedding.jpg"
 image = "J&E_Saint_L.jpg"
 image = "J&E_With_Vicky.jpg"
 image = "J&E_Sunshine.jpg"
-
+image = "Rainbow-Spectrum.jpg"
 
 pic = Dice_Picture.dicePic(image)
 # pic = Dice_Picture.dicePic(image, crop=[1620,2040])
-pic = Dice_Picture.dicePic(image, crop=[2800,2300])     #for cropping
+pic = Dice_Picture.dicePic(image, crop=[1200,1200])     #for cropping
 
 ## outdated but completely usable (right now) codings since these functions are now automatically called into other def
 # pic.possible_blocks()  #for showing possible blocks but this is already called from init
 # pic.dice_alt([36,64])
 # pic.dice_alt(pic.posDiceNum[4]) # TODO: make this a singlular index or X/Y input
 
-pic.inp_Dice()      #for showing the picture but using dice
+pic.inp_Dice() # for showing the picture but using dice
 
 pic.showIm()                      # show original picture
 pic.showIm(image=pic.img_trans)   #show translated image that is original size, probably do not use this unless for testing

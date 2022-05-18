@@ -201,16 +201,16 @@ from scipy.spatial import distance
 
 # NOTE: you'll have to run the dice script initially to make this demo work
 import Dice_Picture
-image = "J&E_Abby_Wedding.jpg"
+image = "Rainbow-Spectrum.jpg"
 pic = Dice_Picture.dicePic(image)
 pic.inp_Dice()
 
 
 
-perc_pip = (math.pi * (2.2**2)) / (15.75**2) # bottom rung dice, generous pip measurement
-perc_pip = (math.pi * (2.0**2)) / (15.75**2) # bottom run dice, more conservative pip measurement
-perc_pip = (math.pi * (1.75**2)) / (15.75**2) # chessex dice, 16mm
-perc_pip = (math.pi * (1.25**2)) / (12.2**2) #chessex die, 12mm
+# perc_pip = (math.pi * (2.2**2)) / (15.75**2) # bottom rung dice, generous pip measurement
+# perc_pip = (math.pi * (2.0**2)) / (15.75**2) # bottom run dice, more conservative pip measurement
+# perc_pip = (math.pi * (1.75**2)) / (15.75**2) # chessex dice, 16mm
+# perc_pip = (math.pi * (1.25**2)) / (12.2**2) #chessex die, 12mm
 perc_pip = (math.pi * (18**2)) / (141**2)   #Gimp dice pic in pixel length (currently used)
 
 black_pip = np.array([30, 30, 30])
@@ -298,9 +298,9 @@ points = points.reshape(ver_y * hor_x, 3) #reshape to 2D vector for distance cal
 die_dist = distance.cdist(points, centroids) # find distance of each block pixel to nearest centroid (right now the centroid is complex so we are now indexing)
 labels = np.argmin(die_dist, axis=1)  # get min column ndx per row
 
-pic.Dice_Pic = ref_clr_array[labels,1].astype('uint8')  # reassign the base die color to the dice pic and set datatype to uint8 (because it will crash otherwise)
-pic.Dice_Pic = pic.Dice_Pic.reshape(ver_y, hor_x, 3)
-pic.showIm(image=pic.Dice_Pic)
+# pic.Dice_Pic = ref_clr_array[labels,1].astype('uint8')  # reassign the base die color to the dice pic and set datatype to uint8 (because it will crash otherwise)
+# pic.Dice_Pic = pic.Dice_Pic.reshape(ver_y, hor_x, 3)
+# pic.showIm(image=pic.Dice_Pic)
 
 
 ## adding the pips (use above)###
@@ -322,5 +322,5 @@ for y_dice in range(0, ver_y):
         ndx_lables += 1 #move to next index of the label
 img_Dice_Pip = img_Dice_Pip.astype('uint8')
 
-pic.showIm(image=pic.Dice_Pic)
+# pic.showIm(image=pic.Dice_Pic)
 pic.showIm(image=img_Dice_Pip)
