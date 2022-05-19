@@ -213,19 +213,19 @@ pic.inp_Dice()
 # perc_pip = (math.pi * (1.25**2)) / (12.2**2) #chessex die, 12mm
 perc_pip = (math.pi * (18**2)) / (141**2)   #Gimp dice pic in pixel length (currently used)
 
-black_pip = np.array([30, 30, 30])
+black_pip = np.array([30, 30, 30])  #for quickly swapping out pip shading/colors
 white_pip = np.array([230, 230, 230])
 
-dice_dict = {'dice_black': {'base_clr':np.array([56, 50, 50]), 'pip_clr':np.array([230, 230, 230])},     # BGR light, 10% blue reduced, Dice clror then pip color
-             'dice_brown': {'base_clr':np.array([57, 71, 155]), 'pip_clr':np.array([230, 230, 230])},
-             'dice_red': {'base_clr':np.array([46, 48, 193]), 'pip_clr':np.array([230, 230, 230])},
-             'dice_orange': {'base_clr':np.array([68, 107, 250]), 'pip_clr':np.array([230, 230, 230])},
-             'dice_yellow': {'base_clr':np.array([86, 222, 247]), 'pip_clr':np.array([30, 30, 30])},
-             'dice_green': {'base_clr':np.array([141, 176, 58]), 'pip_clr':np.array([230, 230, 230])},
-             'dice_blue': {'base_clr':np.array([224, 114, 43]), 'pip_clr':np.array([230, 230, 230])},
-             'dice_Lpurple': {'base_clr':np.array([219, 166, 205]), 'pip_clr':np.array([230, 230, 230])},
-             'dice_Dpurple': {'base_clr':np.array([100, 30, 71]), 'pip_clr':np.array([230, 230, 230])},
-             'dice_white': {'base_clr':np.array([228, 236, 237]), 'pip_clr':np.array([30, 30, 30])}
+dice_dict = {'dice_black': {'base_clr':np.array([56, 50, 50]), 'pip_clr':white_pip},     # BGR light, 10% blue reduced, Dice clror then pip color
+             'dice_brown': {'base_clr':np.array([57, 71, 155]), 'pip_clr':white_pip},
+             'dice_red': {'base_clr':np.array([46, 48, 193]), 'pip_clr':white_pip},
+             'dice_orange': {'base_clr':np.array([68, 107, 250]), 'pip_clr':white_pip},
+             'dice_yellow': {'base_clr':np.array([86, 222, 247]), 'pip_clr':black_pip},
+             'dice_green': {'base_clr':np.array([141, 176, 58]), 'pip_clr':white_pip},
+             'dice_blue': {'base_clr':np.array([224, 114, 43]), 'pip_clr':white_pip},
+             'dice_Lpurple': {'base_clr':np.array([219, 166, 205]), 'pip_clr':white_pip},
+             'dice_Dpurple': {'base_clr':np.array([100, 30, 71]), 'pip_clr':white_pip},
+             'dice_white': {'base_clr':np.array([228, 236, 237]), 'pip_clr':black_pip}
              }
 
 die_block_img = [] # dice image for later referencing
@@ -237,8 +237,7 @@ for key, value in dice_dict.items():
         pip_Area = perc_pip * i    #get pip area
         base_Area = 1 - pip_Area  #get base die area left after taking away pips
 
-        # append to dictionary starting at 1 pips (note that the labels start at 0 so to match these up, you will need to add 1 to the label)
-        # value[0] is dice color, value[1] is pip color
+        # append to dictionary starting at 1 pips
         dice_dict[key]['die_pipNum_clr'][i] = np.round((value['base_clr'] * base_Area) + (value['pip_clr'] * pip_Area))
 
         die_matrix = np.full((15, 15, 3), value['base_clr'],

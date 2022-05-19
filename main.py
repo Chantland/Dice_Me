@@ -10,8 +10,12 @@ image = "J&E_Sunshine.jpg"
 image = "Rainbow-Spectrum.jpg"
 
 pic = Dice_Picture.dicePic(image)
-# pic = Dice_Picture.dicePic(image, crop=[1620,2040])
-pic = Dice_Picture.dicePic(image, crop=[1200,1200])     #for cropping
+
+# optional cropping starting from top left corner (0, 0) coordinate
+# inputs for x and y cropping are start-value then end-value. You can specify 0 for the very start and
+# 'end' for the very end, otherwise just input desired coordinate range (e.g.  ycrop=[30, 1080], xcrop = [105, 'end'])
+pic = Dice_Picture.dicePic(image, ycrop=[0, 'end'], xcrop = [0, 'end'])
+pic = Dice_Picture.dicePic(image, ycrop=[0, 'end'], xcrop = [450, 1620])
 
 ## outdated but completely usable (right now) codings since these functions are now automatically called into other def
 # pic.possible_blocks()  #for showing possible blocks but this is already called from init

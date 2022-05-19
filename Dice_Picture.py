@@ -5,12 +5,18 @@ import math
 import cv2
 
 class dicePic():
-    def __init__(self, image, crop=None): # TODO: Should this automatically give preset values if say this had "preset = True"?
+    def __init__(self, image, ycrop=None, xcrop = None): # TODO: Should this automatically give preset values if say this had "preset = True"?
         self.img = cv2.imread(image)
 
-        # supply x and y values to Crop
-        if crop is not None:
-            self.img = self.img[0:crop[0],0:crop[1]]
+
+        if ycrop is not None:
+            if ycrop[1] == 'end' or ycrop[1] > self.img.shape[0]:
+                ycrop[1] = self.img.shape[0]
+            self.img = self.img[ycrop[0]:ycrop[1],:]
+        if xcrop is not None:
+            if xcrop[1] == 'end' or xcrop[1] > self.img.shape[1]:
+                xcrop[1] = self.img.shape[1]
+            self.img = self.img[:,xcrop[0]:xcrop[1]]
         self.possible_blocks()
     def possible_blocks(self):
 
@@ -89,7 +95,7 @@ class dicePic():
         # The pixel size should be equivalent for both sides
         blockLen = self.img.shape[0] / xydim[0]
 
-        self.img_trans = self.img.copy()
+
         self.img_reduced = np.zeros((xydim[0],xydim[1],3))  #TODO: make this the only thing that originally displays
 
         self.meanPix_list = []
@@ -101,14 +107,13 @@ class dicePic():
                 columns = np.arange(x_dice*blockLen, (x_dice+1)*blockLen, dtype=np.intp)
 
                 # designate the square that we want to average the Blue Green and Red values (3 averages)
-                largePix = self.img_trans[np.ix_(rows,columns)]
+                largePix = self.img[np.ix_(rows,columns)]
 
                 # get means of row and column then round
                 meanPix = largePix.mean(axis=(0, 1)).round()
                 self.meanPix_list.append(meanPix)
 
                 # apply
-                self.img_trans[np.ix_(rows,columns)] = meanPix
                 self.img_reduced[y_dice,x_dice] = meanPix
 
         self.img_reduced = np.array(self.img_reduced,  dtype=np.uint8)
@@ -117,16 +122,21 @@ class dicePic():
         print(f'total number of dice required {dice_count}')
         print(f'pricing from ${dice_cost * 10} to ${dice_cost * 16}\n')
 
-        print('size in inches if you are using 5mm dice')  # TODO: this might use an input
-        print(f'{xydim[0] * 5 / 25.4} tall and {xydim[1] * 5 / 25.4} wide\n')
+        print('Size if you are using 5mm dice')  # TODO: this might use an input
+        print(f'{np.round(xydim[0] * 5 / 25.4, 1)} inches or {np.round(xydim[0] * 5 / 1000, 2)} meters tall\n'
+              f'{np.round(xydim[1] * 5 / 25.4, 1)} inches or {np.round(xydim[1] * 5 / 1000, 2)} meters wide\n')
 
-        print('size in inches if you are using 12mm dice') #TODO: this might use an input
-        print(f'{xydim[0]*12/25.4} tall and {xydim[1]*12/25.4} wide\n')
+        print('Size if you are using 12mm dice') #TODO: this might use an input
+        print(f'{np.round(xydim[0] * 12 / 25.4, 1)} inches or {np.round(xydim[0] * 12 / 1000, 2)} meters tall\n'
+              f'{np.round(xydim[1] * 12 / 25.4, 1)} inches or {np.round(xydim[1] * 12 / 1000, 2)} meters wide\n')
 
-        print('size in inches if you are using 16mm dice')
-        print(f'{xydim[0]*16/25.4} tall and {xydim[1]*16/25.4} wide\n')
+        print('Size if you are using 16mm dice')
+        print(f'{np.round(xydim[0] * 16 / 25.4, 1)} inches or {np.round(xydim[0] * 12 / 1000, 2)} meters tall\n'
+              f'{np.round(xydim[1] * 16 / 25.4, 1)} inches or {np.round(xydim[1] * 12 / 1000, 2)} meters wide\n')
 
-        self.showIm(image=self.img_trans) #TODO: chnage this to call inp_Dice
+
+        self.inp_Dice()
+
 
 
     def inp_Dice(self):
@@ -135,32 +145,36 @@ class dicePic():
 
         ver_y, hor_x = self.img_reduced.shape[0:2] #get x and y axis of reduced image.
 
+        #### region OLD software for showing image without dice pips ##### #todo: maybe make this its own optional def section
+        # dice_dict = {} # initialize the colors used for the dice array #TODO: Allow for user input
+        # # BLUE-GREEN-RED,  blue shifted down 10%
+        # dice_dict = {'dice_black': np.array([56, 50, 50]),
+        #              'dice_brown': np.array([57, 71, 155]),
+        #              'dice_red': np.array([46, 48, 193]),
+        #              'dice_orange': np.array([68, 107, 250]),
+        #              'dice_yellow': np.array([86, 222, 247]),
+        #              'dice_green': np.array([141, 176, 58]),
+        #              'dice_blue': np.array([224, 114, 43]),
+        #              'dice_Lpurple': np.array([219, 166, 205]),
+        #              'dice_Dpurple': np.array([100, 30, 71]),
+        #              'dice_white': np.array([228, 236, 237])
+        #              }
+        # centroids = []
+        # for key, value in dice_dict.items():
+        #     centroids.append(value)
+        # points = self.img_reduced
+        # points = points.reshape(ver_y * hor_x, 3) #reshape to 2D vector for distance calculation
+        #
+        # die_dist = distance.cdist(points, centroids) # find distance of each block pixel to nearest centroid
+        # labels = np.argmin(die_dist, axis=1)  # get min column ndx per row
+        # centroids = np.array(centroids)
+        #
+        # self.pipless_Dice_Pic = centroids[labels].astype('uint8') #reassign the centroids to the dice pic and set datatype to uint8 (because it will crash otherwise)
+        # self.pipless_Dice_Pic = self.pipless_Dice_Pic.reshape(ver_y, hor_x, 3)
+        # self.showIm(image=self.pipless_Dice_Pic)
+        # endregion
 
-        dice_dict = {} # initialize the colors used for the dice array #TODO: Allow for user input
-        # BLUE-GREEN-RED,  blue shifted down 10%
-        dice_dict = {'dice_black': np.array([56, 50, 50]),
-                     'dice_brown': np.array([57, 71, 155]),
-                     'dice_red': np.array([46, 48, 193]),
-                     'dice_orange': np.array([68, 107, 250]),
-                     'dice_yellow': np.array([86, 222, 247]),
-                     'dice_green': np.array([141, 176, 58]),
-                     'dice_blue': np.array([224, 114, 43]),
-                     'dice_Lpurple': np.array([219, 166, 205]),
-                     'dice_Dpurple': np.array([100, 30, 71]),
-                     'dice_white': np.array([228, 236, 237])
-                     }
-        centroids = []
-        for key, value in dice_dict.items():
-            centroids.append(value)
-        points = self.img_reduced
-        points = points.reshape(ver_y * hor_x, 3) #reshape to 2D vector for distance calculation
-
-        die_dist = distance.cdist(points, centroids) # find distance of each block pixel to nearest centroid
-        labels = np.argmin(die_dist, axis=1)  # get min column ndx per row
-        centroids = np.array(centroids)
-
-
-        # # Show the closest centroid based off the mean (commented out to save on time) #TODO: implement this as an optional input
+        #### region closest centroid based off the mean ##### #TODO: implement this as an optional input
         # mean_centroids = np.mean(centroids, axis=1)
         # mean_points = np.mean(points, axis=1)
         # mean_points = mean_points.reshape(ver_y * hor_x)
@@ -177,11 +191,122 @@ class dicePic():
         # pseudo_lables = np.array(pseudo_lables)
         # self.Mean_Dice_Pic = centroids[pseudo_lables].astype('uint8')
         # self.Mean_Dice_Pic = self.Mean_Dice_Pic.reshape(ver_y, hor_x, 3)
+        # endregion
 
 
-        self.Dice_Pic = centroids[labels].astype('uint8') #reassign the centroids to the dice pic and set datatype to uint8 (because it will crash otherwise)
-        self.Dice_Pic = self.Dice_Pic.reshape(ver_y, hor_x, 3)
-        self.showIm(image=self.Dice_Pic)
+        # perc_pip = (math.pi * (2.2**2)) / (15.75**2) # bottom rung dice, generous pip measurement
+        # perc_pip = (math.pi * (2.0**2)) / (15.75**2) # bottom run dice, more conservative pip measurement
+        # perc_pip = (math.pi * (1.75**2)) / (15.75**2) # chessex dice, 16mm
+        # perc_pip = (math.pi * (1.25**2)) / (12.2**2) #chessex die, 12mm
+        perc_pip = (math.pi * (18 ** 2)) / (141 ** 2)  # Gimp dice pic in pixel length (currently used)
+
+        # for quickly swapping out pip shading/colors
+        black_pip = np.array([30, 30, 30])
+        white_pip = np.array([230, 230, 230])
+
+        # BGR light, 10% blue reduced, Dice clror then pip color
+        self.dice_dict = {'dice_black': {'base_clr': np.array([56, 50, 50]), 'pip_clr': white_pip},
+                     'dice_brown': {'base_clr': np.array([57, 71, 155]), 'pip_clr': white_pip},
+                     'dice_red': {'base_clr': np.array([46, 48, 193]), 'pip_clr': white_pip},
+                     'dice_orange': {'base_clr': np.array([68, 107, 250]), 'pip_clr': white_pip},
+                     'dice_yellow': {'base_clr': np.array([86, 222, 247]), 'pip_clr': black_pip},
+                     'dice_green': {'base_clr': np.array([141, 176, 58]), 'pip_clr': white_pip},
+                     'dice_blue': {'base_clr': np.array([224, 114, 43]), 'pip_clr': white_pip},
+                     'dice_Lpurple': {'base_clr': np.array([219, 166, 205]), 'pip_clr': white_pip},
+                     'dice_Dpurple': {'base_clr': np.array([100, 30, 71]), 'pip_clr': white_pip},
+                     'dice_white': {'base_clr': np.array([228, 236, 237]), 'pip_clr': black_pip}
+                     }
+
+        die_block_img = []  # dice image for later referencing
+        ref_clr_array = []  # for matching the pip shaded color,  base die color
+        for key, value in self.dice_dict.items():
+            # Averaged color of the dice when including a specified number of pips
+            self.dice_dict[key]['die_pipNum_clr'] = {}
+            # die image (15x15 or otherwise specified) used for later image creation
+            self.dice_dict[key]['dice_matrix'] = {}
+            for i in range(1, 7):  # run through number of pips
+                pip_Area = perc_pip * i  # get pip area
+                base_Area = 1 - pip_Area  # get base die area left after taking away pips
+
+                # append to dictionary starting at 1 pips
+                self.dice_dict[key]['die_pipNum_clr'][i] = np.round(
+                    (value['base_clr'] * base_Area) + (value['pip_clr'] * pip_Area))
+
+                die_matrix = np.full((15, 15, 3), value['base_clr'],
+                                     dtype='uint8')  # create a 15x15x3 array containing the original dice color
+                # create the pips that will be used.
+                mini_pip = np.full((3, 3, 3), value['base_clr'], dtype='uint8')
+                mini_pip[1, :] = self.dice_dict[key]['pip_clr']
+                mini_pip[:, 1] = self.dice_dict[key]['pip_clr']
+                # implement the pips (tedious but some python systems may not have the switch statement.
+                # This could be shortened but may be more confusing)
+                if i == 1:
+                    die_matrix[6:9, 6:9] = mini_pip
+                elif i == 2:
+                    die_matrix[2:5, 2:5] = mini_pip
+                    die_matrix[10:13, 10:13] = mini_pip
+                elif i == 3:
+                    die_matrix[2:5, 10:13] = mini_pip
+                    die_matrix[6:9, 6:9] = mini_pip
+                    die_matrix[10:13, 2:5] = mini_pip
+                elif i == 4:
+                    die_matrix[2:5, 2:5] = mini_pip
+                    die_matrix[10:13, 2:5] = mini_pip
+                    die_matrix[2:5, 10:13] = mini_pip
+                    die_matrix[10:13, 10:13] = mini_pip
+                elif i == 5:
+                    die_matrix[2:5, 2:5] = mini_pip
+                    die_matrix[10:13, 2:5] = mini_pip
+                    die_matrix[6:9, 6:9] = mini_pip
+                    die_matrix[2:5, 10:13] = mini_pip
+                    die_matrix[10:13, 10:13] = mini_pip
+                elif i == 6:
+                    die_matrix[2:5, 2:5] = mini_pip
+                    die_matrix[6:9, 2:5] = mini_pip
+                    die_matrix[10:13, 2:5] = mini_pip
+                    die_matrix[2:5, 10:13] = mini_pip
+                    die_matrix[6:9, 10:13] = mini_pip
+                    die_matrix[10:13, 10:13] = mini_pip
+                else:
+                    raise ValueError(
+                        "pips specified outside of 1-6 range. This may be an error on the software creator's part")
+                self.dice_dict[key]['dice_matrix'] = die_matrix
+
+                # die matrix
+                die_block_img.append(die_matrix)
+                # for adding to a list for ease of access to colors and pips:
+                # 0 = for each die get the 6 pip variation dice colors,
+                # 1 = base die color
+                ref_clr_array.append([self.dice_dict[key]['die_pipNum_clr'][i], value['base_clr']]) #TODO: make this into two separate variables?
+        ref_clr_array = np.array(ref_clr_array)
+        centroids = ref_clr_array[:, 0]  # dice represent centroids for distance between picture pixels
+
+        points = self.img_reduced
+        points = points.reshape(ver_y * hor_x, 3)  # reshape to 2D vector for distance calculation
+
+        # find distance of each block pixel to nearest centroid
+        die_dist = distance.cdist(points, centroids)
+        labels = np.argmin(die_dist, axis=1)  # get min column ndx per row
+
+        # create map for dice pic (decided on 15 by 15 pixel dice)
+        self.img_Dice_Pic = np.zeros((ver_y * 15, hor_x * 15, 3))
+
+        # create final picture
+        # Use die and pip (centroid label using dice_matrix) with the smallest distance
+        ndx_lables = 0
+        for y_dice in range(0, ver_y):
+            for x_dice in range(0, hor_x):
+                blockLen = 15
+                # set rows and columns (this makes it cleaner down below)
+                rows = np.arange(y_dice * blockLen, (y_dice + 1) * blockLen, dtype=np.intp)
+                columns = np.arange(x_dice * blockLen, (x_dice + 1) * blockLen, dtype=np.intp)
+                
+                # replace with die
+                self.img_Dice_Pic[np.ix_(rows, columns)] = die_block_img[labels[ndx_lables]]
+                ndx_lables += 1 
+        self.img_Dice_Pic = self.img_Dice_Pic.astype('uint8')
+
+        self.showIm(image=self.img_Dice_Pic)
 
 
     def showIm(self, image=None):
