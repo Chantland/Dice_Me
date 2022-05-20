@@ -323,3 +323,41 @@ img_Dice_Pip = img_Dice_Pip.astype('uint8')
 
 # pic.showIm(image=pic.Dice_Pic)
 pic.showIm(image=img_Dice_Pip)
+import os
+
+
+
+############# Saving the image ############
+import cv2
+import os
+
+directory = os.getcwd() # get current directory
+# filename = pic.image_name
+output_dir = 'Image-Output'
+output_dir_path = directory + '\\' + output_dir
+
+os.makedirs(output_dir_path, exist_ok=True) # make Image-Output folder if it does not exist
+os.listdir(output_dir_path)
+
+
+filename = output_dir + '\\' + pic.image_name + '-1' + '.png' #png is crisper
+cv2.imwrite(filename, pic.img_Dice_Pic)
+
+
+
+
+
+print(directory)
+print(output_dir)
+print(filename)
+print(os.listdir(directory))
+
+
+directory = os.getcwd() # get current directory
+# beta test DELETE
+filename = 'Image-Output\\' + pic.image_name + '-1' + '.png'
+cv2.imwrite(filename, pic.img_Dice_Pic)
+
+
+if 'Image-Output' not in os.listdir(directory): #the alternative
+    os.makedirs(directory + '\\Image-Output')

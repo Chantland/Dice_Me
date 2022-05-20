@@ -1,5 +1,5 @@
 
-# requires the download of opencv (cv2) and math
+# requires the download of opencv (cv2), math, numpy, os, and Scipy
 import numpy as np
 import math
 import cv2
@@ -7,7 +7,8 @@ import cv2
 class dicePic():
     def __init__(self, image, ycrop=None, xcrop = None): # TODO: Should this automatically give preset values if say this had "preset = True"?
         self.img = cv2.imread(image)
-
+        image = image.split('.')
+        self.image_name = image[0]
 
         if ycrop is not None:
             if ycrop[1] == 'end' or ycrop[1] > self.img.shape[0]:
@@ -26,7 +27,7 @@ class dicePic():
 
         divisor = 2
         mod_list = []
-        greatest_mod = 1 # TODO: I think this is superfluous
+        greatest_mod = 1 # TODO: I think this is superfluous (wait, why?)
         num1,num2 = ver_y, hor_x #make copies so we can gradually reduce the number
         num_roll_through = 0
         #for finding the greatest number that can go into both pixel lengths of the photo
@@ -57,6 +58,8 @@ class dicePic():
         for iDiv in mod_product_list:  #take the possible pixel sizes and divide them from the image to get number of dice
             dicePixSizeList.append([ver_y/iDiv, hor_x / iDiv])
         dicePixSizeList = np.array(dicePixSizeList, dtype=np.intp)
+        # for displaying the possible dice that could fit in the picture.
+        # Mark it self. just for ease in case it needs to be accessed later after the picture is done.
         self.posDiceNum = dicePixSizeList
 
         np.set_printoptions(suppress=True) # suppress scientific notation for easier display
@@ -96,9 +99,7 @@ class dicePic():
         blockLen = self.img.shape[0] / xydim[0]
 
 
-        self.img_reduced = np.zeros((xydim[0],xydim[1],3))  #TODO: make this the only thing that originally displays
-
-        self.meanPix_list = []
+        self.img_reduced = np.zeros((xydim[0],xydim[1],3))
         for y_dice in range(0, xydim[0]):
             for x_dice in range(0, xydim[1]):
 
@@ -108,10 +109,7 @@ class dicePic():
 
                 # designate the square that we want to average the Blue Green and Red values (3 averages)
                 largePix = self.img[np.ix_(rows,columns)]
-
-                # get means of row and column then round
                 meanPix = largePix.mean(axis=(0, 1)).round()
-                self.meanPix_list.append(meanPix)
 
                 # apply
                 self.img_reduced[y_dice,x_dice] = meanPix
@@ -126,7 +124,7 @@ class dicePic():
         print(f'{np.round(xydim[0] * 5 / 25.4, 1)} inches or {np.round(xydim[0] * 5 / 1000, 2)} meters tall\n'
               f'{np.round(xydim[1] * 5 / 25.4, 1)} inches or {np.round(xydim[1] * 5 / 1000, 2)} meters wide\n')
 
-        print('Size if you are using 12mm dice') #TODO: this might use an input
+        print('Size if you are using 12mm dice')
         print(f'{np.round(xydim[0] * 12 / 25.4, 1)} inches or {np.round(xydim[0] * 12 / 1000, 2)} meters tall\n'
               f'{np.round(xydim[1] * 12 / 25.4, 1)} inches or {np.round(xydim[1] * 12 / 1000, 2)} meters wide\n')
 
@@ -311,7 +309,7 @@ class dicePic():
 
     def showIm(self, image=None):
         """
-        :param image: n*m*3 np.array, optional
+        :param image: n*m*3 np.array Uint8 dtype, optional
             displays the image desired or shows the currently transformed img
         :return:
         """
@@ -320,16 +318,18 @@ class dicePic():
         if image is None:
             image = self.img
 
+
         # show image then run the following commands (or else it doesn't display)
         cv2.namedWindow("image", cv2.WINDOW_NORMAL)
         cv2.imshow('image', image)
         cv2.waitKey(0)  # show window until key press
         cv2.destroyAllWindows()  # then destroy
 
-#
-# img2 = img.copy()                               # copy the imgage so the original is unedited
-# LargePix = img2[120:240, 120:240, :]            # designate space we want to mean Red Green and Blue (3 averages)
-# mean_pix = LargePix.mean(axis = (0,1)).round()  # get means of row and column then round
-# # LargePix[:,:] = mean_pix                      # unused to normally set the mean color to LargePix
-#
-# img2[120:240, 120:240] = mean_pix               # replace all pixels in the originally chosen space with the mean RGB
+    def printIm(self, Bool = False):
+
+        pass
+        import os
+        directory = os.getcwd()
+
+
+        # print(directory)
