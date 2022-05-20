@@ -82,26 +82,29 @@ class dicePic():
 
 
 
-    def dice_alt(self, xydim): #TODO: make xydim optional and figure out how to correctly label these
+    def dice_alt(self, yxdim): #TODO: make yxdim optional and figure out how to correctly label these
         """
-        :param xydim: int or None, optional,
-            Input number of dice desired on the vertical and horizontal axis. Bust input a list [y,x].
-            y into the vertical axis, x divide cleanly into the horizontal axis and.
+        :param yxdim: int or None, optional,
+            Input number of dice desired on the vertical and horizontal axis. Best input a list [y,x].
+            y into the vertical axis, x divide cleanly into the horizontal axis
         :return:
         """
-        xydim = np.array(xydim) # convert to ndarray if not already
+        yxdim = np.array(yxdim) # convert to ndarray if not already
 
-        if any(self.img.shape[0:2] % xydim != 0): # check if list given is possible to divide into the image neatly
+        if any(self.img.shape[0:2] % yxdim != 0): # check if list given is possible to divide into the image neatly
             raise ValueError("X-Y dimensions given must evenly divide into the image dimensions")
+
+        self.y_dice, self.x_dice = np.array(yxdim) # sepaarte into y and x dice for visual ease
+
 
         # Take one of the sides (arbitrarily Y) and divide it by the number of dice.
         # The pixel size should be equivalent for both sides
-        blockLen = self.img.shape[0] / xydim[0]
+        blockLen = self.img.shape[0] / self.y_dice
 
 
-        self.img_reduced = np.zeros((xydim[0],xydim[1],3))
-        for y_dice in range(0, xydim[0]):
-            for x_dice in range(0, xydim[1]):
+        self.img_reduced = np.zeros((self.y_dice,self.x_dice,3))
+        for y_dice in range(0, self.y_dice):
+            for x_dice in range(0, self.x_dice):
 
                 # set rows and columns (this makes it cleaner down below)
                 rows = np.arange(y_dice*blockLen, (y_dice+1)*blockLen, dtype=np.intp)
@@ -115,22 +118,22 @@ class dicePic():
                 self.img_reduced[y_dice,x_dice] = meanPix
 
         self.img_reduced = np.array(self.img_reduced,  dtype=np.uint8)
-        dice_count = xydim[0] * xydim[1]
+        dice_count = self.y_dice * self.x_dice
         dice_cost = np.ceil(dice_count/100)
         print(f'total number of dice required {dice_count}')
         print(f'pricing from ${dice_cost * 10} to ${dice_cost * 16}\n')
 
         print('Size if you are using 5mm dice')  # TODO: this might use an input
-        print(f'{np.round(xydim[0] * 5 / 25.4, 1)} inches or {np.round(xydim[0] * 5 / 1000, 2)} meters tall\n'
-              f'{np.round(xydim[1] * 5 / 25.4, 1)} inches or {np.round(xydim[1] * 5 / 1000, 2)} meters wide\n')
+        print(f'{np.round(self.y_dice * 5 / 25.4, 1)} inches or {np.round(self.y_dice * 5 / 1000, 2)} meters tall\n'
+              f'{np.round(self.x_dice * 5 / 25.4, 1)} inches or {np.round(self.x_dice * 5 / 1000, 2)} meters wide\n')
 
         print('Size if you are using 12mm dice')
-        print(f'{np.round(xydim[0] * 12 / 25.4, 1)} inches or {np.round(xydim[0] * 12 / 1000, 2)} meters tall\n'
-              f'{np.round(xydim[1] * 12 / 25.4, 1)} inches or {np.round(xydim[1] * 12 / 1000, 2)} meters wide\n')
+        print(f'{np.round(self.y_dice * 12 / 25.4, 1)} inches or {np.round(self.y_dice * 12 / 1000, 2)} meters tall\n'
+              f'{np.round(self.x_dice * 12 / 25.4, 1)} inches or {np.round(self.x_dice * 12 / 1000, 2)} meters wide\n')
 
         print('Size if you are using 16mm dice')
-        print(f'{np.round(xydim[0] * 16 / 25.4, 1)} inches or {np.round(xydim[0] * 12 / 1000, 2)} meters tall\n'
-              f'{np.round(xydim[1] * 16 / 25.4, 1)} inches or {np.round(xydim[1] * 12 / 1000, 2)} meters wide\n')
+        print(f'{np.round(self.y_dice * 16 / 25.4, 1)} inches or {np.round(self.y_dice * 12 / 1000, 2)} meters tall\n'
+              f'{np.round(self.x_dice * 16 / 25.4, 1)} inches or {np.round(self.x_dice * 12 / 1000, 2)} meters wide\n')
 
 
         self.inp_Dice()
@@ -141,7 +144,6 @@ class dicePic():
         import numpy as np
         from scipy.spatial import distance
 
-        ver_y, hor_x = self.img_reduced.shape[0:2] #get x and y axis of reduced image.
 
         #### region OLD software for showing image without dice pips ##### #todo: maybe make this its own optional def section
         # dice_dict = {} # initialize the colors used for the dice array #TODO: Allow for user input
@@ -161,21 +163,21 @@ class dicePic():
         # for key, value in dice_dict.items():
         #     centroids.append(value)
         # points = self.img_reduced
-        # points = points.reshape(ver_y * hor_x, 3) #reshape to 2D vector for distance calculation
+        # points = points.reshape(self.y_dice * self.x_dice, 3) #reshape to 2D vector for distance calculation
         #
         # die_dist = distance.cdist(points, centroids) # find distance of each block pixel to nearest centroid
         # labels = np.argmin(die_dist, axis=1)  # get min column ndx per row
         # centroids = np.array(centroids)
         #
         # self.pipless_Dice_Pic = centroids[labels].astype('uint8') #reassign the centroids to the dice pic and set datatype to uint8 (because it will crash otherwise)
-        # self.pipless_Dice_Pic = self.pipless_Dice_Pic.reshape(ver_y, hor_x, 3)
+        # self.pipless_Dice_Pic = self.pipless_Dice_Pic.reshape(self.y_dice, self.x_dice, 3)
         # self.showIm(image=self.pipless_Dice_Pic)
         # endregion
 
         #### region closest centroid based off the mean ##### #TODO: implement this as an optional input
         # mean_centroids = np.mean(centroids, axis=1)
         # mean_points = np.mean(points, axis=1)
-        # mean_points = mean_points.reshape(ver_y * hor_x)
+        # mean_points = mean_points.reshape(self.y_dice * self.x_dice)
         # pseudo_lables = []
         # for i in range(0, len(mean_points)):
         #     lowest_number = 251
@@ -188,7 +190,7 @@ class dicePic():
         #     pseudo_lables.append(lowest_cent)
         # pseudo_lables = np.array(pseudo_lables)
         # self.Mean_Dice_Pic = centroids[pseudo_lables].astype('uint8')
-        # self.Mean_Dice_Pic = self.Mean_Dice_Pic.reshape(ver_y, hor_x, 3)
+        # self.Mean_Dice_Pic = self.Mean_Dice_Pic.reshape(self.y_dice, self.x_dice, 3)
         # endregion
 
 
@@ -280,20 +282,20 @@ class dicePic():
         centroids = ref_clr_array[:, 0]  # dice represent centroids for distance between picture pixels
 
         points = self.img_reduced
-        points = points.reshape(ver_y * hor_x, 3)  # reshape to 2D vector for distance calculation
+        points = points.reshape(self.y_dice * self.x_dice, 3)  # reshape to 2D vector for distance calculation
 
         # find distance of each block pixel to nearest centroid
         die_dist = distance.cdist(points, centroids)
         labels = np.argmin(die_dist, axis=1)  # get min column ndx per row
 
         # create map for dice pic (decided on 15 by 15 pixel dice)
-        self.img_Dice_Pic = np.zeros((ver_y * 15, hor_x * 15, 3))
+        self.img_Dice_Pic = np.zeros((self.y_dice * 15, self.x_dice * 15, 3))
 
         # create final picture
         # Use die and pip (centroid label using dice_matrix) with the smallest distance
         ndx_lables = 0
-        for y_dice in range(0, ver_y):
-            for x_dice in range(0, hor_x):
+        for y_dice in range(0, self.y_dice):
+            for x_dice in range(0, self.x_dice):
                 blockLen = 15
                 # set rows and columns (this makes it cleaner down below)
                 rows = np.arange(y_dice * blockLen, (y_dice + 1) * blockLen, dtype=np.intp)
@@ -322,14 +324,43 @@ class dicePic():
         # show image then run the following commands (or else it doesn't display)
         cv2.namedWindow("image", cv2.WINDOW_NORMAL)
         cv2.imshow('image', image)
+        print("CLICK ON THE IMAGE AND PRESS ANY KEY TO CONTINUE")
         cv2.waitKey(0)  # show window until key press
+        if self.y_dice * self.x_dice > 20000:
+            save_pic_ques = input(f"WARNING this picture will be {self.x_dice *15} by {self.y_dice *15} and may be more"
+                  f"than {(self.y_dice * self.x_dice)/15 } megabytes to save. Would you still like to save this photo?"
+                  f"\n type 'y' or 'n'")
+            if save_pic_ques == 'y' or save_pic_ques == 'Y':
+                self.printIm()
+        else:
+            self.printIm()
         cv2.destroyAllWindows()  # then destroy
 
+
+
     def printIm(self, Bool = False):
-
-        pass
+        import cv2
         import os
-        directory = os.getcwd()
 
+        directory = os.getcwd()  # get current directory
+        output_dir = "Image-Output"  # output directory
+        output_dir_path = directory + '\\' + output_dir  # output directory path
+        os.makedirs(output_dir_path, exist_ok=True)  # make Image-Output folder if it does not exist
 
-        # print(directory)
+        # create the dimension add-ons  for sake of clarity and later use
+        img_dim_name = self.y_dice.astype('str') + "y" + self.x_dice.astype('str') + "x"
+        # find all duplicates images which share the dimensions as the one we are about to save.
+        file_copy = 0
+        for i_string in os.listdir(output_dir_path):
+            if img_dim_name in i_string and self.image_name in i_string:
+                last_digit = i_string.split('-')[-1].split(".")[
+                    0]  # split by the dashes then leave off the file extension
+                last_digit = int(last_digit)
+                file_copy = max(file_copy, last_digit)
+        file_copy = str(file_copy + 1)  # do one more than the present number of image duplicates
+
+        # prepare filename, add self. for ease of confirming file name
+        self.filename = self.image_name + "-" + img_dim_name + "-" + file_copy + ".png"  # png here is cleaner and smaller file size
+
+        cv2.imwrite(output_dir + "\\" + self.filename, self.img_Dice_Pic)  # write the file to folder
+

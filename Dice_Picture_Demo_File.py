@@ -331,27 +331,53 @@ import os
 import cv2
 import os
 
-directory = os.getcwd() # get current directory
-# filename = pic.image_name
-output_dir = 'Image-Output'
-output_dir_path = directory + '\\' + output_dir
-
+directory = os.getcwd()         # get current directory
+output_dir = "Image-Output"     # output directory
+output_dir_path = directory + '\\' + output_dir  # output directory path
 os.makedirs(output_dir_path, exist_ok=True) # make Image-Output folder if it does not exist
-os.listdir(output_dir_path)
+
+# create the dimension add-ons  for sake of clarity and later use
+img_dim_name = pic.y_dice.astype('str') + "y" + pic.x_dice.astype('str') + "x"
+# find all duplicates images which share the dimensions as the one we are about to save.
+file_copy = 0
+for i_string in os.listdir(output_dir_path):
+    if img_dim_name in i_string and pic.image_name in i_string:
+        last_digit = i_string.split('-')[-1].split(".")[0]  #split by the dashes then leave off the file extension
+        last_digit = int(last_digit)
+        file_copy = max(file_copy, last_digit)
+file_copy = str(file_copy + 1)  #do one more than the present number of image duplicates
+
+# prepare filename, add self. for ease of confirming file name
+pic.filename = pic.image_name + "-" + img_dim_name + "-" + file_copy + ".png"  #png here is cleaner and smaller file size
+
+cv2.imwrite(output_dir + "\\" + pic.filename, pic.img_Dice_Pic) #write the file to folder
 
 
-filename = output_dir + '\\' + pic.image_name + '-1' + '.png' #png is crisper
-cv2.imwrite(filename, pic.img_Dice_Pic)
 
+
+
+print(file_copy)
+#
+find_dim = []
+for i_string in os.listdir(output_dir_path):
+    if img_dim_name in i_string and pic.image_name in i_string:
+        find_dim.append(i_string)
+print(find_dim)
 
 
 
 
 print(directory)
-print(output_dir)
+print(output_dir_path)
 print(filename)
 print(os.listdir(directory))
+print(os.listdir(output_dir_path))
 
+
+
+
+find_dim = [find_dim for i_string in os.listdir(output_dir_path) if img_dim_name in i_string and 'J&E_Abby_Wedding' in i_string]
+print(find_dim)
 
 directory = os.getcwd() # get current directory
 # beta test DELETE
