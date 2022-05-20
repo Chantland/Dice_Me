@@ -7,8 +7,8 @@ import cv2
 class dicePic():
     def __init__(self, image, ycrop=None, xcrop = None): # TODO: Should this automatically give preset values if say this had "preset = True"?
         self.img = cv2.imread(image)
-        image = image.split('.')
-        self.image_name = image[0]
+        self.image_name = image.split('.')[0].split('\\')[-1] # remove file extension and path location
+
 
         if ycrop is not None:
             if ycrop[1] == 'end' or ycrop[1] > self.img.shape[0]:
@@ -327,18 +327,22 @@ class dicePic():
         print("CLICK ON THE IMAGE AND PRESS ANY KEY TO CONTINUE")
         cv2.waitKey(0)  # show window until key press
         if self.y_dice * self.x_dice > 20000:
-            save_pic_ques = input(f"WARNING this picture will be {self.x_dice *15} by {self.y_dice *15} and may be more"
-                  f"than {(self.y_dice * self.x_dice)/15 } megabytes to save. Would you still like to save this photo?"
-                  f"\n type 'y' or 'n'")
+            save_pic_ques = input(f"WARNING this picture will be {self.x_dice *15} by {self.y_dice *15} and may be more "
+                  f"than {(self.y_dice * self.x_dice)/15000 } megabytes to save. Would you still like to save this photo?"
+                  f"\n Type 'y' or 'n'\n")
             if save_pic_ques == 'y' or save_pic_ques == 'Y':
                 self.printIm()
+                print("Image saved")
+            else:
+                print("Image not saved")
         else:
             self.printIm()
-        cv2.destroyAllWindows()  # then destroy
+            print("Image saved")
+        cv2.destroyAllWindows()  # then destroy window
 
 
 
-    def printIm(self, Bool = False):
+    def printIm(self):
         import cv2
         import os
 
