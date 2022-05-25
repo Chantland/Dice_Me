@@ -5,12 +5,11 @@ from importlib import reload
 Dice_Picture = reload(Dice_Picture)
 
 # feel free to use these as demos
-image = "Images\\J&E_Abby_Wedding.jpg"
 image = "Images/J&E_Abby_Wedding.jpg"
-image = "Images\\J&E_Saint_L.jpg"
-image = "Images\\J&E_With_Vicky.jpg"
-image = "Images\\J&E_Sunshine.jpg"
-image = "Images\\Rainbow-Spectrum.jpg"
+image = "Images/J&E_Saint_L.jpg"
+image = "Images/J&E_With_Vicky.jpg"
+image = "Images/J&E_Sunshine.jpg"
+image = "Images/Rainbow-Spectrum.jpg"
 
 # input an image in the parenthesis, if it is in another folder, you must specify it
 # THIS IS THE ONLY LINE OF CODE YOU TECHNICALLY NEED
