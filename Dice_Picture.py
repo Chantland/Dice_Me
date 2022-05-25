@@ -1,13 +1,13 @@
 
-# requires the download of opencv (cv2), math, numpy, os, and Scipy
+# requires the download of opencv-python (cv2), math, numpy, os, and Scipy
 import numpy as np
 import math
 import cv2
 
 class dicePic():
-    def __init__(self, image, ycrop=None, xcrop = None): # TODO: Should this automatically give preset values if say this had "preset = True"?
+    def __init__(self, image, ycrop=None, xcrop = None, inp_prompt = True): # inp_prompt defines if the program should automatically go between definitions
         self.img = cv2.imread(image)
-        self.image_name = image.split('.')[0].split('\\')[-1] # remove file extension and path location
+        self.image_name = image.split('.')[0].split('/')[-1].split('\\')[-1] # remove file extension and path location
 
 
         if ycrop is not None:
@@ -18,12 +18,15 @@ class dicePic():
             if xcrop[1] == 'end' or xcrop[1] > self.img.shape[1]:
                 xcrop[1] = self.img.shape[1]
             self.img = self.img[:,xcrop[0]:xcrop[1]]
-        self.possible_blocks()
+        # do we want an input prompt? If not, do not go automatically to next steps (declared to reduce tedium)
+        self.inp_prompt = inp_prompt
+        if self.inp_prompt:
+            self.possible_blocks()
+
+
     def possible_blocks(self):
 
-
-        ver_y, hor_x = self.img.shape[0:2] # TODO: I think I want this able function with an optional tuple argument, this might be removed later
-
+        ver_y, hor_x = self.img.shape[0:2]
 
         divisor = 2
         mod_list = []
@@ -62,29 +65,33 @@ class dicePic():
         # Mark it self. just for ease in case it needs to be accessed later after the picture is done.
         self.posDiceNum = dicePixSizeList
 
-        np.set_printoptions(suppress=True) # suppress scientific notation for easier display
 
-        varNum = 0
-        print("possible combinations of the number of dice per row per column")
-        for idim in self.posDiceNum:
-            print(f'{varNum} {idim}')
-            varNum += 1
+        if self.inp_prompt:
+            np.set_printoptions(suppress=True) # suppress scientific notation for easier display
+            varNum = 0
 
-        dice_alt_inpt = input(f"Which of the following dice dimension sets (0 to {len(self.posDiceNum) - 1}) do you want?")
-        dice_alt_inpt = int(dice_alt_inpt)
+            print("possible combinations of the number of dice per row per column")
+            for idim in self.posDiceNum:
+                print(f'{varNum} {idim}')
+                varNum += 1
 
-        if dice_alt_inpt < 0 or dice_alt_inpt > len(self.posDiceNum) - 1:
-            raise ValueError(
-                f"Number chosen is out of bounds, please choose a number between 0 and {len(self.posDiceNum) - 1}")
-        else:
-            self.dice_alt(self.posDiceNum[dice_alt_inpt]) #get the intended X and Y axis from available dice dimensions
+            dice_alt_inpt = input(f"Which of the following dice dimension sets (0 to {len(self.posDiceNum) - 1}) do you want?")
+            dice_alt_inpt = int(dice_alt_inpt)
+
+            if dice_alt_inpt < 0 or dice_alt_inpt > len(self.posDiceNum) - 1:
+                raise ValueError(
+                    f"Number chosen is out of bounds, please choose a number between 0 and {len(self.posDiceNum) - 1}")
+            # get the intended X and Y axis from available dice dimensions
+            else:
+                self.dice_alt(self.posDiceNum[dice_alt_inpt])
 
 
 
 
-    def dice_alt(self, yxdim): #TODO: make yxdim optional and figure out how to correctly label these
+
+    def dice_alt(self, yxdim:int): #TODO: figure out how to correctly label these
         """
-        :param yxdim: int or None, optional,
+        :param yxdim: int,
             Input number of dice desired on the vertical and horizontal axis. Best input a list [y,x].
             y into the vertical axis, x divide cleanly into the horizontal axis
         :return:
@@ -118,29 +125,32 @@ class dicePic():
                 self.img_reduced[y_dice,x_dice] = meanPix
 
         self.img_reduced = np.array(self.img_reduced,  dtype=np.uint8)
-        dice_count = self.y_dice * self.x_dice
-        dice_cost = np.ceil(dice_count/100)
-        print(f'total number of dice required {dice_count}')
-        print(f'pricing from ${dice_cost * 10} to ${dice_cost * 16}\n')
 
-        print('Size if you are using 5mm dice')  # TODO: this might use an input
-        print(f'{np.round(self.y_dice * 5 / 25.4, 1)} inches or {np.round(self.y_dice * 5 / 1000, 2)} meters tall\n'
-              f'{np.round(self.x_dice * 5 / 25.4, 1)} inches or {np.round(self.x_dice * 5 / 1000, 2)} meters wide\n')
+        # display for indicating cost of the dice
+        if self.inp_prompt:
+            dice_count = self.y_dice * self.x_dice
+            dice_cost = np.ceil(dice_count/100)
+            print(f'total number of dice required {dice_count}')
+            print(f'pricing from ${dice_cost * 10} to ${dice_cost * 16}\n')
 
-        print('Size if you are using 12mm dice')
-        print(f'{np.round(self.y_dice * 12 / 25.4, 1)} inches or {np.round(self.y_dice * 12 / 1000, 2)} meters tall\n'
-              f'{np.round(self.x_dice * 12 / 25.4, 1)} inches or {np.round(self.x_dice * 12 / 1000, 2)} meters wide\n')
+            print('Size if you are using 5mm dice')  # TODO: this might use an input
+            print(f'{np.round(self.y_dice * 5 / 25.4, 1)} inches or {np.round(self.y_dice * 5 / 1000, 2)} meters tall\n'
+                  f'{np.round(self.x_dice * 5 / 25.4, 1)} inches or {np.round(self.x_dice * 5 / 1000, 2)} meters wide\n')
 
-        print('Size if you are using 16mm dice')
-        print(f'{np.round(self.y_dice * 16 / 25.4, 1)} inches or {np.round(self.y_dice * 12 / 1000, 2)} meters tall\n'
-              f'{np.round(self.x_dice * 16 / 25.4, 1)} inches or {np.round(self.x_dice * 12 / 1000, 2)} meters wide\n')
+            print('Size if you are using 12mm dice')
+            print(f'{np.round(self.y_dice * 12 / 25.4, 1)} inches or {np.round(self.y_dice * 12 / 1000, 2)} meters tall\n'
+                  f'{np.round(self.x_dice * 12 / 25.4, 1)} inches or {np.round(self.x_dice * 12 / 1000, 2)} meters wide\n')
+
+            print('Size if you are using 16mm dice')
+            print(f'{np.round(self.y_dice * 16 / 25.4, 1)} inches or {np.round(self.y_dice * 12 / 1000, 2)} meters tall\n'
+                  f'{np.round(self.x_dice * 16 / 25.4, 1)} inches or {np.round(self.x_dice * 12 / 1000, 2)} meters wide\n')
+            # Skipped, this will give the default value for everything so if you want a non-default,
+            # declare inp_prompt = True for initializing
+            self.inp_Dice()
 
 
-        self.inp_Dice()
 
-
-
-    def inp_Dice(self):
+    def inp_Dice(self, perc_pip:float = None, dice_dict=None):
         import numpy as np
         from scipy.spatial import distance
 
@@ -193,29 +203,37 @@ class dicePic():
         # self.Mean_Dice_Pic = self.Mean_Dice_Pic.reshape(self.y_dice, self.x_dice, 3)
         # endregion
 
+        # Size of the pip in percentage of the actual die side.
+        if perc_pip is not None:
+            if perc_pip < 0 or perc_pip > 1:
+                raise ValueError("Percentage impossible, use values between and including 0 and 1")
+            # perc_pip = (math.pi * (2.2**2)) / (15.75**2) # bottom rung dice, generous pip measurement
+            # perc_pip = (math.pi * (2.0**2)) / (15.75**2) # bottom run dice, more conservative pip measurement
+            # perc_pip = (math.pi * (1.75**2)) / (15.75**2) # chessex dice, 16mm
+            # perc_pip = (math.pi * (1.25**2)) / (12.2**2) #chessex die, 12mm
+        else:
+            perc_pip = (math.pi * (18 ** 2)) / (141 ** 2)  # Gimp dice pic in pixel length (currently used)
 
-        # perc_pip = (math.pi * (2.2**2)) / (15.75**2) # bottom rung dice, generous pip measurement
-        # perc_pip = (math.pi * (2.0**2)) / (15.75**2) # bottom run dice, more conservative pip measurement
-        # perc_pip = (math.pi * (1.75**2)) / (15.75**2) # chessex dice, 16mm
-        # perc_pip = (math.pi * (1.25**2)) / (12.2**2) #chessex die, 12mm
-        perc_pip = (math.pi * (18 ** 2)) / (141 ** 2)  # Gimp dice pic in pixel length (currently used)
 
-        # for quickly swapping out pip shading/colors
-        black_pip = np.array([30, 30, 30])
-        white_pip = np.array([230, 230, 230])
+        if dice_dict is None:
+            # for quickly swapping out pip shading/colors
+            black_pip = np.array([30, 30, 30])
+            white_pip = np.array([230, 230, 230])
 
-        # BGR light, 10% blue reduced, Dice clror then pip color
-        self.dice_dict = {'dice_black': {'base_clr': np.array([56, 50, 50]), 'pip_clr': white_pip},
-                     'dice_brown': {'base_clr': np.array([57, 71, 155]), 'pip_clr': white_pip},
-                     'dice_red': {'base_clr': np.array([46, 48, 193]), 'pip_clr': white_pip},
-                     'dice_orange': {'base_clr': np.array([68, 107, 250]), 'pip_clr': white_pip},
-                     'dice_yellow': {'base_clr': np.array([86, 222, 247]), 'pip_clr': black_pip},
-                     'dice_green': {'base_clr': np.array([141, 176, 58]), 'pip_clr': white_pip},
-                     'dice_blue': {'base_clr': np.array([224, 114, 43]), 'pip_clr': white_pip},
-                     'dice_Lpurple': {'base_clr': np.array([219, 166, 205]), 'pip_clr': white_pip},
-                     'dice_Dpurple': {'base_clr': np.array([100, 30, 71]), 'pip_clr': white_pip},
-                     'dice_white': {'base_clr': np.array([228, 236, 237]), 'pip_clr': black_pip}
-                     }
+            # BGR light, 10% blue reduced, Dice color then pip color
+            self.dice_dict = {'dice_black': {'base_clr': np.array([56, 50, 50]), 'pip_clr': white_pip},
+                         'dice_brown': {'base_clr': np.array([57, 71, 155]), 'pip_clr': white_pip},
+                         'dice_red': {'base_clr': np.array([46, 48, 193]), 'pip_clr': white_pip},
+                         'dice_orange': {'base_clr': np.array([68, 107, 250]), 'pip_clr': white_pip},
+                         'dice_yellow': {'base_clr': np.array([86, 222, 247]), 'pip_clr': black_pip},
+                         'dice_green': {'base_clr': np.array([141, 176, 58]), 'pip_clr': white_pip},
+                         'dice_blue': {'base_clr': np.array([224, 114, 43]), 'pip_clr': white_pip},
+                         'dice_Lpurple': {'base_clr': np.array([219, 166, 205]), 'pip_clr': white_pip},
+                         'dice_Dpurple': {'base_clr': np.array([100, 30, 71]), 'pip_clr': white_pip},
+                         'dice_white': {'base_clr': np.array([228, 236, 237]), 'pip_clr': black_pip}
+                         }
+        else:
+            self.dice_dict = dice_dict
 
         die_block_img = []  # dice image for later referencing
         ref_clr_array = []  # for matching the pip shaded color,  base die color
@@ -306,12 +324,13 @@ class dicePic():
                 ndx_lables += 1 
         self.img_Dice_Pic = self.img_Dice_Pic.astype('uint8')
 
-        self.showIm(image=self.img_Dice_Pic)
+        if self.inp_prompt:
+            self.showIm(image=self.img_Dice_Pic)
 
 
-    def showIm(self, image=None):
+    def showIm(self, image, print_img=True):
         """
-        :param image: n*m*3 np.array Uint8 dtype, optional
+        :param image: n*m*3 np.array Uint8 dtype
             displays the image desired or shows the currently transformed img
         :return:
         """
@@ -326,18 +345,19 @@ class dicePic():
         cv2.imshow('image', image)
         print("CLICK ON THE IMAGE AND PRESS ANY KEY TO CONTINUE")
         cv2.waitKey(0)  # show window until key press
-        if self.y_dice * self.x_dice > 20000:
-            save_pic_ques = input(f"WARNING this picture will be {self.x_dice *15} by {self.y_dice *15} and may be more "
-                  f"than {(self.y_dice * self.x_dice)/15000 } megabytes to save. Would you still like to save this photo?"
-                  f"\n Type 'y' or 'n'\n")
-            if save_pic_ques == 'y' or save_pic_ques == 'Y':
+        if print_img is True:
+            if self.y_dice * self.x_dice > 20000:
+                save_pic_ques = input(f"WARNING this picture will be {self.x_dice *15} by {self.y_dice *15} pixels and may be more "
+                      f"than {np.round((self.y_dice * self.x_dice)/15000) } megabytes to save. Would you still like to save this photo?"
+                      f"\n Type 'y' or 'n'\n")
+                if save_pic_ques == 'y' or save_pic_ques == 'Y':
+                    self.printIm()
+                    print("Image saved")
+                else:
+                    print("Image not saved")
+            else:
                 self.printIm()
                 print("Image saved")
-            else:
-                print("Image not saved")
-        else:
-            self.printIm()
-            print("Image saved")
         cv2.destroyAllWindows()  # then destroy window
 
 
@@ -348,7 +368,7 @@ class dicePic():
 
         directory = os.getcwd()  # get current directory
         output_dir = "Image-Output"  # output directory
-        output_dir_path = directory + '\\' + output_dir  # output directory path
+        output_dir_path = directory + '/' + output_dir  # output directory path
         os.makedirs(output_dir_path, exist_ok=True)  # make Image-Output folder if it does not exist
 
         # create the dimension add-ons  for sake of clarity and later use
@@ -366,5 +386,5 @@ class dicePic():
         # prepare filename, add self. for ease of confirming file name
         self.filename = self.image_name + "-" + img_dim_name + "-" + file_copy + ".png"  # png here is cleaner and smaller file size
 
-        cv2.imwrite(output_dir + "\\" + self.filename, self.img_Dice_Pic)  # write the file to folder
+        cv2.imwrite(output_dir + "/" + self.filename, self.img_Dice_Pic)  # write the file to folder
 
