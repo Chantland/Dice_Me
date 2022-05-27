@@ -21,8 +21,7 @@ pic = Dice_Picture.dicePic(image)
 
 # removing input arguments and including optional arguments
 # These following lines run the code the exact same as above except give no prompts or text displays (except showIm)
-pic = Dice_Picture.dicePic("Images\\J&E_Abby_Wedding.jpg", ycrop=[0, 'end'], xcrop = [0, 'end'], inp_prompt=False)
-pic.possible_blocks()                       #for showing possible blocks but this is already called from init
+pic = Dice_Picture.dicePic("Images/J&E_Abby_Wedding.jpg", ycrop=[0, 'end'], xcrop = [0, 'end'], inp_prompt=False)
 pic.dice_alt(pic.posDiceNum[7])             # or pic.dice_alt([72, 128]), For creating the mock-up image for later use
 pic.inp_Dice(perc_pip=.06, dice_dict=None)  # making the actual dice picture including size of the pips relative to the
                                             # die, you may also specifiy non-default dice (see below for template)

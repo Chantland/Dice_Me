@@ -20,11 +20,7 @@ class dicePic():
             self.img = self.img[:,xcrop[0]:xcrop[1]]
         # do we want an input prompt? If not, do not go automatically to next steps (declared to reduce tedium)
         self.inp_prompt = inp_prompt
-        if self.inp_prompt:
-            self.possible_blocks()
 
-
-    def possible_blocks(self):
 
         ver_y, hor_x = self.img.shape[0:2]
 
