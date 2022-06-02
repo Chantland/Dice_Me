@@ -28,7 +28,7 @@ class dicePic():
 
         divisor = 2
         mod_list = []
-        greatest_mod = 1 # TODO: I think this is superfluous (wait, why?)
+        greatest_mod = 1
         num1,num2 = ver_y, hor_x #make copies so we can gradually reduce the number
         num_roll_through = 0
         #for finding the greatest number that can go into both pixel lengths of the photo
@@ -154,7 +154,7 @@ class dicePic():
 
 
         #### region OLD software for showing image without dice pips ##### #todo: maybe make this its own optional def section
-        # dice_dict = {} # initialize the colors used for the dice array #TODO: Allow for user input
+        # dice_dict = {} # initialize the colors used for the dice array
         # # BLUE-GREEN-RED,  blue shifted down 10%
         # dice_dict = {'dice_black': np.array([56, 50, 50]),
         #              'dice_brown': np.array([57, 71, 155]),
