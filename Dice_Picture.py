@@ -21,7 +21,9 @@ class dicePic():
         # do we want an input prompt? If not, do not go automatically to next steps (declared to reduce tedium)
         self.inp_prompt = inp_prompt
 
+        self.pic_div()
 
+    def pic_div(self):
         ver_y, hor_x = self.img.shape[0:2]
 
         divisor = 2
@@ -64,8 +66,8 @@ class dicePic():
 
         if self.inp_prompt:
             np.set_printoptions(suppress=True) # suppress scientific notation for easier display
-            varNum = 0
 
+            varNum = 0
             print("possible combinations of the number of dice per row per column")
             for idim in self.posDiceNum:
                 print(f'{varNum} {idim}')

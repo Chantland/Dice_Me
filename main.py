@@ -7,7 +7,7 @@ Dice_Picture = reload(Dice_Picture)
 # feel free to use these as demos
 image = "Images/J&E_Abby_Wedding.jpg"
 image = "Images/J&E_Saint_L.jpg"
-image = "Images/J&E_With_Vicky.jpg"
+image = "Images/J&E_With_Vicky.jpg" #this will not work unless you crop it (see below)
 image = "Images/J&E_Sunshine.jpg"
 image = "Images/Rainbow-Spectrum.jpg"
 
@@ -35,7 +35,7 @@ pic.printIm()                               #print the image (if you didn't prin
 pic = Dice_Picture.dicePic(image, ycrop=[0, 'end'], xcrop = [0, 'end'])
 pic = Dice_Picture.dicePic(image, ycrop=[0, 'end'], xcrop = [450, 1620])
 pic = Dice_Picture.dicePic(image, ycrop=[0, 2400], xcrop = [0, 1860])
-pic = Dice_Picture.dicePic(image, ycrop=[20, 800], xcrop = [60, 1200])
+pic = Dice_Picture.dicePic(image, ycrop=[24, 2040], xcrop = [96, 2040])
 
 
 
