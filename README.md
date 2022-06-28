@@ -1,6 +1,13 @@
 # Dice_Me
-Turn inputted pictures into a dice mosiac using predefined inputs such a number of dice (i.e. the dimensions used), color of dice, pip size, color
+Turns inputted pictures into a dice mosaic output using optional predefined inputs such as: cropping number of dice (i.e. the dimensions used), color of dice, pip size, and pip color.
 
-The only command required is Dice_Picture.dicePic(image="image.png")
-However, check Main.py for more options and tips
+
+
+
+
+
+## Setup
+1. Make sure that you have the required packages listed in `requirements.txt`. Use `pip install -r requirements.txt` if unsure. 
+2. The only command required is `Dice_Me.dicePic("image.png")` with `image.png` replaced with your file name and path.
+
 
