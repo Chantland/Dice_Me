@@ -1,10 +1,10 @@
-import Dice_Picture
+import Dice_Me
 # if you need required packages, enter in the terminal: pip install -r requirements.txt   gff
 
 
-# for reloading the main dice file, disregard this unless you change "Dice_Picture.py"
+# for reloading the main dice file, disregard this unless you change "Dice_Me.py"
 from importlib import reload
-Dice_Picture = reload(Dice_Picture)
+Dice_Me = reload(Dice_Me)
 
 # feel free to use these as demos
 image = "Images/J&E_Abby_Wedding.jpg"
@@ -15,7 +15,11 @@ image = "Images/Rainbow-Spectrum.jpg"
 
 # input an image in the parenthesis, if it is in another folder, you must specify it
 # THIS IS THE ONLY LINE OF CODE YOU TECHNICALLY NEED
-pic = Dice_Picture.dicePic(image)
+pic = Dice_Me.dicePic(image)
+
+
+
+
 
 
 ################## The rest here is optional ##############
@@ -23,7 +27,7 @@ pic = Dice_Picture.dicePic(image)
 
 # removing input arguments and including optional arguments
 # These following lines run the code the exact same as above except give no prompts or text displays (except showIm)
-pic = Dice_Picture.dicePic("Images/J&E_Abby_Wedding.jpg", ycrop=[0, 'end'], xcrop = [0, 'end'], inp_prompt=False)
+pic = Dice_Me.dicePic("Images/J&E_Abby_Wedding.jpg", ycrop=[0, 'end'], xcrop = [0, 'end'], inp_prompt=False)
 pic.dice_alt(pic.posDiceNum[8])             # For creating the mock-up image for later use
                                             # also accepts pic.dice_alt([72, 128])
 pic.inp_Dice(perc_pip=.06, dice_dict=None)  # making the actual dice picture including size of the pips relative to the
@@ -40,10 +44,10 @@ pic.printIm()                               # print the image (if you didn't pri
 # optional cropping starting from top left corner (0, 0) coordinate
 # inputs for x and y cropping are start-value then end-value. You can specify 0 for the very start and
 # 'end' for the very end, otherwise just input desired coordinate range (e.g.  ycrop=[30, 1080], xcrop = [105, 'end'])
-pic = Dice_Picture.dicePic(image, ycrop=[0, 'end'], xcrop = [0, 'end'])
-pic = Dice_Picture.dicePic(image, ycrop=[0, 'end'], xcrop = [450, 1620])
-pic = Dice_Picture.dicePic(image, ycrop=[0, 2400], xcrop = [0, 1860])
-pic = Dice_Picture.dicePic(image, ycrop=[24, 2040], xcrop = [96, 2040])
+pic = Dice_Me.dicePic(image, ycrop=[0, 'end'], xcrop = [0, 'end'])
+pic = Dice_Me.dicePic(image, ycrop=[0, 'end'], xcrop = [450, 1620])
+pic = Dice_Me.dicePic(image, ycrop=[0, 2400], xcrop = [0, 1860])
+pic = Dice_Me.dicePic(image, ycrop=[24, 2040], xcrop = [96, 2040])
 
 
 
