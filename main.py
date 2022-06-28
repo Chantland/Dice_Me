@@ -1,4 +1,6 @@
 import Dice_Picture
+# if you need required packages, enter in the terminal: pip install -r requirements.txt   gff
+
 
 # for reloading the main dice file, disregard this unless you change "Dice_Picture.py"
 from importlib import reload
