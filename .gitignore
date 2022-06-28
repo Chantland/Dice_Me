@@ -3,3 +3,5 @@ Beta-Testing-Stuff
 Old_image_outputs
 venv
 Image-Output
+.*
+_*
