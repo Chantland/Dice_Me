@@ -2,7 +2,7 @@
 Turns inputted pictures into a dice mosaic output using optional predefined inputs such as: cropping number of dice (i.e. the dimensions used), color of dice, pip size, and pip color.
 
 
-
+![Before Dice](https://github.com/Chantland/Dice_Me/tree/main/Images/J&E_Saint_L.jpg)
 
 
 
