@@ -12,7 +12,7 @@ Turns inputted pictures into a dice mosaic output using optional predefined inpu
 ## Setup
 1. Make sure that you have the required packages listed in `requirements.txt`. Use `pip install -r requirements.txt` if unsure. 
 2. The only command required is `Dice_Me.dicePic("image.png")` with `image.png` replaced with your file name and path.
-3. However, this will only use the default values for everything. For use of optional inputs use the following as well as checking main.py for general examples for running for running: 
+3. However, this will only use the default values for everything. For use of optional inputs use the following as well as checking `main.py` for general examples for running: 
 
 
 ## Functions
