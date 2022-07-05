@@ -18,22 +18,20 @@ image = "Images/Rainbow-Spectrum.jpg"
 pic = Dice_Me.dicePic(image)
 
 
-
-
-
-
 ################## The rest here is optional ##############
 
 
 # removing input arguments and including optional arguments
 # These following lines run the code the exact same as above except give no prompts or text displays (except showIm)
+# pic = Dice_Me.dicePic initializes an object and accepts optional cropping (see below).
+# inp_prompt defines if the function will automatically continue and defaults to true
 pic = Dice_Me.dicePic("Images/J&E_Abby_Wedding.jpg", ycrop=[0, 'end'], xcrop = [0, 'end'], inp_prompt=False)
 pic.dice_alt(pic.posDiceNum[8])             # For creating the mock-up image for later use
                                             # also accepts pic.dice_alt([72, 128])
 pic.inp_Dice(perc_pip=.06, dice_dict=None)  # making the actual dice picture including size of the pips relative to the
-                                            # die, you may also specifiy non-default dice (see below for template)
+                                            # die, you may also specifiy non-default dice (see below for template!)
 pic.showIm(pic.img_Dice_Pic, print_img=False)   #show the image and optionally print it,
-pic.printIm()                               # print the image (if you didn't print before)
+pic.printIm(file_dup = False)               # print the image (if you didn't print before)
                                             # pic.printIm(file_dup=True) is optional argument to allow for multiple of
                                             # the same file printed.
 
@@ -56,7 +54,7 @@ pic = Dice_Me.dicePic(image, ycrop=[24, 2040], xcrop = [96, 2040])
 
 # create your own dict, requires a numpy array.
 # you may change the names of the dice and even the quantity (as long as there are more than 0)
-# DO NOT CHNAGE 'base_clr' or 'pip_clr'
+# DO NOT CHANGE 'base_clr' or 'pip_clr'
 import numpy as np
 
 # for ease of input
