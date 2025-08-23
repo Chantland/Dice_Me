@@ -158,9 +158,8 @@ class dicePic():
 
 
 
-    def inp_Dice(self, perc_pip:float = None, dice_dict=None):
+    def inp_Dice(self, perc_pip:float = None, dice_dict=None, centroidChange = False):
         import numpy as np
-        from scipy.spatial import distance
 
 
         #### region OLD software for showing image without dice pips ##### #todo: maybe make this its own optional def section
@@ -243,6 +242,8 @@ class dicePic():
         else:
             self.dice_dict = dice_dict
 
+
+        # Create dice that will be later used to create the final image
         die_block_img = []  # dice image for later referencing
         ref_clr_array = []  # for matching the pip shaded color,  base die color
         for key, value in self.dice_dict.items():
@@ -304,14 +305,54 @@ class dicePic():
                 # 0 = for each die get the 6 pip variation dice colors,
                 # 1 = base die color
                 ref_clr_array.append([self.dice_dict[key]['die_pipNum_clr'][i], value['base_clr']]) #TODO: make this into two separate variables?
-        ref_clr_array = np.array(ref_clr_array)
+        ref_clr_array = np.array(ref_clr_array) 
+        if centroidChange is True:
+            centroidMetric = None
+            while centroidChange is True:
+                allowable_inputs = ['braycurtis', 'canberra', 'chebyshev', 'cityblock', 'correlation', 'cosine', 'dice', 'euclidean', 'hamming', 'jaccard', 'jensenshannon', 'kulczynski1', 'mahalanobis', 'matching', 'minkowski', 'rogerstanimoto', 'russellrao', 'seuclidean', 'sokalmichener', 'sokalsneath', 'sqeuclidean', 'yule']
+                centroidMetric_inp = input("Input the centroid distance metric you would like to use. Type 'help' if you would like a list, or 'all' if you would like to print all of them in the file, \notherwise typing anything else will use the last metric you chose or the default:\n")
+                if centroidMetric_inp.lower() == 'help':
+                    print(allowable_inputs)
+                    continue
+                elif centroidMetric_inp.lower() in allowable_inputs: #If in allowed input, use that metric
+                    print("Successful input")
+                    centroidMetric = centroidMetric_inp
+                    showImg = True
+                elif centroidMetric_inp.lower() == 'all': #If all, print all metrics to a folder
+                    for metric in allowable_inputs:
+                        import os
+                        try:
+                            self.nearest_Dice(die_block_img, ref_clr_array, showImg=False, centroidMetric=metric)
+                        except:
+                            print(f"Error using metric {metric}, skipping")
+                            continue
+                        customLoc = os.getcwd() + '/Image-Output/Metric Demo' # get current directory
+                        self.printIm(customLoc = customLoc, file_dup=False, customNameAddition = metric)
+                    centroidChange = False
+                    print(f"All metrics printed to {customLoc}")
+                    continue
+                else:# if metric not in allowable inputs, use last metric
+                    centroidChange = False
+                    print(f"Not recognized input, Using last metric chosen: {centroidMetric}")
+                    showImg = False
+                self.nearest_Dice(die_block_img, ref_clr_array, showImg=showImg, centroidMetric=centroidMetric)
+        else:
+            
+            self.nearest_Dice(die_block_img, ref_clr_array)
+            
+
+    #Get match aggregated pixels of a given space to dice colors and pip nums
+    def nearest_Dice(self, die_block_img, ref_clr_array, showImg = False, centroidMetric=None):
+        from scipy.spatial import distance
         centroids = ref_clr_array[:, 0]  # dice represent centroids for distance between picture pixels
 
         points = self.img_reduced
         points = points.reshape(self.y_dice * self.x_dice, 3)  # reshape to 2D vector for distance calculation
 
+
+        
         # find distance of each block pixel to nearest centroid
-        die_dist = distance.cdist(points, centroids)
+        die_dist = distance.cdist(points, centroids, centroidMetric) if centroidMetric is not None else distance.cdist(points, centroids)
         labels = np.argmin(die_dist, axis=1)  # get min column ndx per row
 
         # create map for dice pic (decided on 15 by 15 pixel dice)
@@ -331,9 +372,9 @@ class dicePic():
                 self.img_Dice_Pic[np.ix_(rows, columns)] = die_block_img[labels[ndx_lables]]
                 ndx_lables += 1 
         self.img_Dice_Pic = self.img_Dice_Pic.astype('uint8')
-
-        if self.inp_prompt:
+        if self.inp_prompt or showImg: #If you would like to see the image before saving, the input prompt should be set to True or show image True
             self.showIm(image=self.img_Dice_Pic)
+
 
 
     def showIm(self, image, print_img=True):
@@ -371,18 +412,21 @@ class dicePic():
 
 
 
-    def printIm(self, file_dup = False):
+    def printIm(self, customLoc = None, file_dup = False, customNameAddition = None):
         import cv2
         import os
-
-        directory = os.getcwd()  # get current directory
-        output_dir = "Image-Output"  # output directory
-        output_dir_path = directory + '/' + output_dir  # output directory path
+        if customLoc is None: # if no custom location, make Image-Output folder in current directory
+            directory = os.getcwd()  # get current directory
+            output_dir = "Image-Output"  # output directory
+            output_dir_path = directory + '/' + output_dir  # output directory path
+            
+        else:
+            output_dir_path = customLoc
         os.makedirs(output_dir_path, exist_ok=True)  # make Image-Output folder if it does not exist
-
         # create the dimension add-ons  for sake of clarity and later use
         img_dim_name = self.y_dice.astype('str') + "y" + self.x_dice.astype('str') + "x"
-
+        if customNameAddition is not None:
+            img_dim_name = img_dim_name + "-" + customNameAddition
         # Allows for different file names to be created so that original file is not overwritten
         if file_dup is True:
             # find all duplicates images which share the dimensions as the one we are about to save.
@@ -400,5 +444,5 @@ class dicePic():
         # prepare filename, add self. for ease of confirming file name
         self.filename = self.image_name + "-" + img_dim_name + file_copy + ".png"  # png here is cleaner and smaller file size
 
-        cv2.imwrite(output_dir + "/" + self.filename, self.img_Dice_Pic)  # write the file to folder
+        cv2.imwrite(output_dir_path + "/" + self.filename, self.img_Dice_Pic)  # write the file to folder
 

@@ -1,6 +1,7 @@
 import Dice_Me
-# It may be good to make a virtual enviornment: python3 -m venv venv
-# if you need required packages, enter in the terminal: pip install -r requirements.txt   
+
+# # It may be good to make a virtual enviornment: python3 -m venv venv
+# # if you need required packages, enter in the terminal: pip install -r requirements.txt   
 
 
 # for reloading the main dice file, disregard this unless you change "Dice_Me.py"
@@ -8,22 +9,27 @@ from importlib import reload
 Dice_Me = reload(Dice_Me)
 
 
+
+
+
+
 from tkinter import Tk     # from tkinter import Tk for Python 3.x
 from tkinter.filedialog import askopenfilename
 
 # A quick gui for selecting images. Most image types should work.
-Tk().withdraw() # we don't want a full GUI, so keep the root window from appearing
-image = askopenfilename() # show an "Open" dialog box and return the path to the selected file
+# Tk().withdraw() # we don't want a full GUI, so keep the root window from appearing
+# image = askopenfilename() # show an "Open" dialog box and return the path to the selected file7
+
 
 # # feel free to use these as demos
 # image = "Images/J&E_Abby_Wedding.jpg"
-# image = "Images/J&E_Saint_L.jpg"
+image = "Images/J&E_Saint_L.jpg"
 # image = "Images/J&E_With_Vicky.jpg" #this will not work unless you crop it (see below)
 # image = "Images/J&E_Sunshine.jpg"
 # image = "Images/Rainbow-Spectrum.jpg"
 
 # input an image in the parenthesis, if it is in another folder, you must specify it
-# THIS IS THE ONLY LINE OF CODE YOU TECHNICALLY NEED
+# THIS IS THE ONLY LINE OF CODE YOU TECHNICALLY NEED, otherwise, comment out and use below examples
 pic = Dice_Me.dicePic(image)
 
 
@@ -31,13 +37,13 @@ pic = Dice_Me.dicePic(image)
 
 
 # # removing input arguments and including optional arguments
-# # These following lines run the code the exact same as above except give no prompts or text displays (except showIm)
-# # pic = Dice_Me.dicePic initializes an object and accepts optional cropping (see below).
-# # inp_prompt defines if the function will automatically continue and defaults to true
-# pic = Dice_Me.dicePic("Images/J&E_Abby_Wedding.jpg", ycrop=[0, 'end'], xcrop = [0, 'end'], inp_prompt=False)
-# pic.dice_alt(pic.posDiceNum[8])             # For creating the mock-up image for later use
+# These following lines run the code the exact same as above except give no prompts or text displays (except showIm)
+# pic = Dice_Me.dicePic initializes an object and accepts optional cropping (see below).
+# inp_prompt defines if the function will automatically continue and defaults to true
+# pic = Dice_Me.dicePic("Images/J&E_Saint_L.jpg", ycrop=[24, 2040], xcrop = [96, 2040], inp_prompt=False)
+# pic.dice_alt(pic.posDiceNum[9])             # For creating the mock-up image for later use
 #                                             # also accepts pic.dice_alt([72, 128])
-# pic.inp_Dice(perc_pip=.06, dice_dict=None)  # making the actual dice picture including size of the pips relative to the
+# pic.inp_Dice(perc_pip=.06, dice_dict=None, centroidChange=True)  # making the actual dice picture including size of the pips relative to the
 #                                             # die, you may also specifiy non-default dice (see below for template!)
 # pic.showIm(pic.img_Dice_Pic, print_img=False)   #show the image and optionally print it,
 # pic.printIm(file_dup = False)               # print the image (if you didn't print before)
@@ -55,6 +61,7 @@ pic = Dice_Me.dicePic(image)
 # pic = Dice_Me.dicePic(image, ycrop=[0, 'end'], xcrop = [450, 1620])
 # pic = Dice_Me.dicePic(image, ycrop=[0, 2400], xcrop = [0, 1860])
 # pic = Dice_Me.dicePic(image, ycrop=[24, 2040], xcrop = [96, 2040])
+
 
 
 
