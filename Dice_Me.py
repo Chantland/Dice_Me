@@ -114,7 +114,7 @@ class dicePic():
 
         # Take one of the sides (arbitrarily Y) and divide it by the number of dice.
         # The pixel size should be equivalent for both sides
-        blockLen = self.img.shape[0] / self.y_dice
+        blockLen = self.img.shape[0] / self.y_dice 
 
 
         self.img_reduced = np.zeros((self.y_dice,self.x_dice,3))
@@ -150,8 +150,8 @@ class dicePic():
                   f'{np.round(self.x_dice * 12 / 25.4, 1)} inches or {np.round(self.x_dice * 12 / 1000, 2)} meters wide\n')
 
             print('Size if you are using 16mm dice')
-            print(f'{np.round(self.y_dice * 16 / 25.4, 1)} inches or {np.round(self.y_dice * 12 / 1000, 2)} meters tall\n'
-                  f'{np.round(self.x_dice * 16 / 25.4, 1)} inches or {np.round(self.x_dice * 12 / 1000, 2)} meters wide\n')
+            print(f'{np.round(self.y_dice * 16 / 25.4, 1)} inches or {np.round(self.y_dice * 16 / 1000, 2)} meters tall\n'
+                  f'{np.round(self.x_dice * 16 / 25.4, 1)} inches or {np.round(self.x_dice * 16 / 1000, 2)} meters wide\n')
             # Skipped, this will give the default value for everything so if you want a non-default,
             # declare inp_prompt = True for initializing
             self.inp_Dice()

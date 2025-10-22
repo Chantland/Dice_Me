@@ -89,7 +89,24 @@ pic = Dice_Me.dicePic(image)
 #               'dice_white': {'base_clr': np.array([228, 236, 237]), 'pip_clr': black_pip}
 #               }
 
-
+# dice_dict =  {'dice_black': {'base_clr': np.array([56, 50, 50]), 'pip_clr': white_pip},
+#               'dice_brown_lp': {'base_clr': np.array([57, 71, 155]), 'pip_clr': white_pip},
+#               'dice_red_lp': {'base_clr': np.array([46, 48, 193]), 'pip_clr': white_pip},
+#               'dice_orange_lp': {'base_clr': np.array([68, 107, 250]), 'pip_clr': white_pip},
+#               'dice_yellow_lp': {'base_clr': np.array([86, 222, 247]), 'pip_clr': black_pip},
+#               'dice_green_lp': {'base_clr': np.array([141, 176, 58]), 'pip_clr': white_pip},
+#               'dice_blue_lp': {'base_clr': np.array([224, 114, 43]), 'pip_clr': white_pip},
+#               'dice_Lpurple_lp': {'base_clr': np.array([219, 166, 205]), 'pip_clr': white_pip},
+#               'dice_Dpurple_lp': {'base_clr': np.array([100, 30, 71]), 'pip_clr': white_pip},
+#               'dice_white': {'base_clr': np.array([228, 236, 237]), 'pip_clr': black_pip},
+#               'dice_brown_dp': {'base_clr': np.array([57, 71, 155]), 'pip_clr': black_pip},
+#               'dice_red_dp': {'base_clr': np.array([46, 48, 193]), 'pip_clr': black_pip},
+#               'dice_orange_dp': {'base_clr': np.array([68, 107, 250]), 'pip_clr': black_pip},
+#               'dice_green_dp': {'base_clr': np.array([141, 176, 58]), 'pip_clr': black_pip},
+#               'dice_blue_dp': {'base_clr': np.array([224, 114, 43]), 'pip_clr': black_pip},
+#               'dice_Lpurple_dp': {'base_clr': np.array([219, 166, 205]), 'pip_clr': black_pip},
+#               'dice_Dpurple_dp': {'base_clr': np.array([100, 30, 71]), 'pip_clr': black_pip},
+#               }
 
 # black_pip = np.array([30, 30, 30])
 # white_pip = np.array([230, 230, 230])
@@ -127,6 +144,9 @@ pic = Dice_Me.dicePic(image)
 #               'dice_Dpurple_d': {'base_clr': np.array([80, 25, 90]), 'pip_clr': white_pip},
 #               'dice_white_d': {'base_clr': np.array([150, 150, 150]), 'pip_clr': black_pip}
 #               }
+
+
+
 # pic = Dice_Me.dicePic(image, ycrop=[24, 2040], xcrop = [96, 2040], inp_prompt=False)
 # pic.dice_alt(pic.posDiceNum[7])             # For creating the mock-up image for later use
 # #                                             # also accepts pic.dice_alt([72, 128])
